@@ -136,6 +136,15 @@ def get_venv_dir(playground_dir):
     return playground_dir / '.venv'
 
 
+def get_python_path(venv_path):
+    """Attempt getting the path to Python in a virtual environment."""
+    bin_path = venv_path / 'bin'
+    if bin_path.exists():
+        return bin_path / 'python'
+    scripts_path = venv_path / 'Scripts'
+    return scripts_path / 'python'
+
+
 def clean_config(args, raw_config={}):
     """Returns config options in a more usable format."""
     playground_dir = get_playground_dir(args)
@@ -185,7 +194,7 @@ def run_command(args):
     except PGTypeNotFoundError as err:
         print(f"The playground type '{err.args[0]}' is not configured.")
     except PGOptionNotFoundError as err:
-        print("'{err.args[0]}' is not configured for type '{err.args[1]}'.")
+        print(f"'{err.args[0]}' is not configured for type '{err.args[1]}'.")
     except FileNotFoundError as err:
         print(f'The path {err.filename} does not exist.')
     except PGJSONFormatError as err:
@@ -250,7 +259,7 @@ def new_files(playground_dir, files):
 def new_settings(playground_dir, settings):
     """Create the settings file for a playground."""
     venv_path = get_venv_dir(playground_dir)
-    python_path = venv_path / 'Scripts' / 'python'
+    python_path = get_python_path(venv_path)
     settings = {'python': str(python_path), **settings}
 
     settings_path = playground_dir / 'settings.json'
@@ -267,9 +276,9 @@ def new_venv(playground_dir):
 def install_reqs(playground_dir):
     """Install the packages from a playground's requirements file."""
     venv_path = get_venv_dir(playground_dir)
-    pip_path = venv_path / 'Scripts' / 'pip'
+    python_path = get_python_path(venv_path)
     reqs_path = playground_dir / 'requirements' / 'requirements.in'
-    os.system(f'{pip_path} install --no-cache-dir -r {reqs_path}')
+    os.system(f'{python_path} -m pip install --no-cache-dir -r {reqs_path}')
 
 
 def delete(args):
