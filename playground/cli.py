@@ -1,11 +1,20 @@
 from argparse import ArgumentParser
 import json
+from json import JSONDecodeError
 import os
 from pathlib import Path
 from shutil import rmtree
 import venv
 
 from . import ABOUT_TEXT, APP_NAME, DESCRIPTION, VERSION
+from .exceptions import (
+    PGConfigNotFoundError,
+    PGDoesNotExistError,
+    PGJSONFormatError,
+    PGOptionNotFoundError,
+    PGSettingsNotFoundError,
+    PGTypeNotFoundError
+)
 from .resources import load_text_resources
 
 
@@ -19,7 +28,7 @@ def main():
     elif args.version:
         print_version()
     elif args.command:
-        args.func(args)
+        run_command(args)
     else:
         parser.print_usage()
 
@@ -96,42 +105,103 @@ def print_version():
 
 def get_config():
     """Get the configuration for the package."""
-    config_json = load_text_resources('config.json')
-    return json.loads(config_json)
+    try:
+        config_json = load_text_resources('config.json')
+        return json.loads(config_json)
+    except FileNotFoundError:
+        raise PGConfigNotFoundError
+    except JSONDecodeError as err:
+        raise PGJSONFormatError('config.json', str(err))
 
 
 def get_settings(playground_dir):
     """Retrieve the settings for a given playground."""
     settings_path = playground_dir / 'settings.json'
-    with open(settings_path) as f:
-        return json.load(f)
+    try:
+        with open(settings_path) as f:
+            return json.load(f)
+    except JSONDecodeError as err:
+        raise PGJSONFormatError(settings_path, str(err))
+    except FileNotFoundError:
+        raise PGSettingsNotFoundError(playground_dir)
+
+
+def get_playground_dir(args):
+    """Retrieve a playground folder from 'args'."""
+    return Path(args.name).resolve()
+
+
+def get_venv_dir(playground_dir):
+    """Retrieve the virtual environment directory in a playground."""
+    return playground_dir / '.venv'
 
 
 def clean_config(args, raw_config={}):
     """Returns config options in a more usable format."""
-    playground_dir = Path(args.name).resolve()
+    playground_dir = get_playground_dir(args)
     config = {'dir': playground_dir}
     if args.command == 'new':
-        type_config = raw_config[args.type]
+        try:
+            type_config = raw_config[args.type]
+        except KeyError:
+            raise PGTypeNotFoundError(args.type)
         lib = type_config['lib'] + args.lib
-        config.update(
-            {
-                'folders': type_config['folders'] + ['requirements'],
-                'files': {
-                    **type_config['files'],
-                    'requirements/requirements.in': lib
-                },
-                'lib': lib,
-                'settings': {
-                    'module': type_config['module'],
-                    'args': type_config['args']
+        try:
+            config.update(
+                {
+                    'folders': type_config['folders'] + ['requirements'],
+                    'files': {
+                        **type_config['files'],
+                        'requirements/requirements.in': lib
+                    },
+                    'lib': lib,
+                    'settings': {
+                        'module': type_config['module'],
+                        'args': type_config['args']
+                    }
                 }
-            }
-        )
-    elif args.command == 'run':
-        settings = get_settings(playground_dir)
-        config.update(settings=settings)
+            )
+        except KeyError as err:
+            raise PGOptionNotFoundError(err.args, args.type)
+    else:
+        if not playground_dir.exists():
+            raise PGDoesNotExistError
+        if args.command == 'run':
+            settings = get_settings(playground_dir)
+            config.update(settings=settings)
     return config
+
+
+def run_command(args):
+    """Call the function associated with a command name."""
+    try:
+        args.func(args)
+    except PGDoesNotExistError:
+        print(f'The playground {args.name} does not exist.')
+    except PGConfigNotFoundError:
+        print(f'The config file for this package could not be found.')
+    except PGSettingsNotFoundError as err:
+        print(f"The settings for playground '{err.args[0]}' was not found.")
+    except PGTypeNotFoundError as err:
+        print(f"The playground type '{err.args[0]}' is not configured.")
+    except PGOptionNotFoundError as err:
+        print("'{err.args[0]}' is not configured for type '{err.args[1]}'.")
+    except FileNotFoundError as err:
+        print(f'The path {err.filename} does not exist.')
+    except PGJSONFormatError as err:
+        print(f"JSON format error in '{err.args[0]}': {err.args[1]}")
+    except KeyboardInterrupt:
+        pass
+    except Exception as err:
+        print(str(err))
+    else:
+        return
+    
+    # If any exception occurs, cleanup code will be executed
+    if args.command == 'new':
+        playground_dir = get_playground_dir(args)
+        remove_if_exists(playground_dir)
+    print('The operation has been cancelled.')
 
 
 def new(args):
@@ -149,10 +219,15 @@ def new(args):
     print('Playground creation successful.')
 
 
+def remove_if_exists(folder):
+    """Remove 'folder' if it exists."""
+    if folder.exists():
+        rmtree(folder)
+
+
 def new_playground(playground_dir):
     """Create the playground folder."""
-    if playground_dir.exists():
-        rmtree(playground_dir)
+    remove_if_exists(playground_dir)
     playground_dir.mkdir()
 
 
@@ -174,7 +249,7 @@ def new_files(playground_dir, files):
 
 def new_settings(playground_dir, settings):
     """Create the settings file for a playground."""
-    venv_path = playground_dir / '.venv'
+    venv_path = get_venv_dir(playground_dir)
     python_path = venv_path / 'Scripts' / 'python'
     settings = {'python': str(python_path), **settings}
 
@@ -185,13 +260,13 @@ def new_settings(playground_dir, settings):
 
 def new_venv(playground_dir):
     """Create a virtual environment for a playground."""
-    venv_path = playground_dir / '.venv'
+    venv_path = get_venv_dir(playground_dir)
     venv.create(venv_path, with_pip=True)
 
 
 def install_reqs(playground_dir):
     """Install the packages from a playground's requirements file."""
-    venv_path = playground_dir / '.venv'
+    venv_path = get_venv_dir(playground_dir)
     pip_path = venv_path / 'Scripts' / 'pip'
     reqs_path = playground_dir / 'requirements' / 'requirements.in'
     os.system(f'{pip_path} install --no-cache-dir -r {reqs_path}')
