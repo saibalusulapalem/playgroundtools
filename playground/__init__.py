@@ -1,15 +1,14 @@
 from .metadata import get_metadata
 
-
 _metadata = get_metadata()
 
 
-APP_NAME = _metadata['Name']
+APP_NAME = _metadata["Name"]
 APP_TITLE = APP_NAME.title()
-DESCRIPTION = _metadata['Summary']
-VERSION = _metadata['Version']
-AUTHOR = _metadata['Author']
-LICENSE = _metadata['License']
+DESCRIPTION = _metadata["Summary"]
+VERSION = _metadata["Version"]
+AUTHOR = _metadata["Author"]
+LICENSE = _metadata["License"]
 
 ABOUT_TEXT = f"""
 {APP_NAME} v {VERSION}

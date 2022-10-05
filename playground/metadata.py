@@ -8,10 +8,10 @@ def get_metadata():
         meta = metadata(__package__)
     except PackageNotFoundError:
         meta = {
-            'Name': __package__,
-            'Summary': 'description',
-            'Author': 'author',
-            'Version': 'version',
-            'License': 'license',
+            "Name": __package__,
+            "Summary": "description",
+            "Author": "author",
+            "Version": "version",
+            "License": "license",
         }
     return meta

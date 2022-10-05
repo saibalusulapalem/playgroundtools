@@ -9,24 +9,24 @@ def get_playground_dir(args):
 
 def get_venv_dir(playground_dir):
     """Retrieve the virtual environment directory in a playground."""
-    return playground_dir / '.venv'
+    return playground_dir / ".venv"
 
 
 def get_python_path(venv_path):
     """Attempt getting the path to Python in a virtual environment."""
-    bin_path = venv_path / 'bin'
+    bin_path = venv_path / "bin"
     if bin_path.exists():
-        return bin_path / 'python'
-    scripts_path = venv_path / 'Scripts'
-    return scripts_path / 'python'
+        return bin_path / "python"
+    scripts_path = venv_path / "Scripts"
+    return scripts_path / "python"
 
 
 def get_command(python, module, args):
     """Creates a command from a path, module, and arguments."""
-    args = ' '.join(args)
-    cmd = f'{python} -m {module}'
+    args = " ".join(args)
+    cmd = f"{python} -m {module}"
     if args:
-        cmd += f' {args}'
+        cmd += f" {args}"
     return cmd
 
 
