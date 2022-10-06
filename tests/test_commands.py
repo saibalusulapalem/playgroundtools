@@ -1,40 +1,46 @@
 import os
 from argparse import Namespace
 
+import pytest
+
 from ..playground import commands
+
+
+@pytest.fixture
+def commands_dir(tmp_path_factory):
+    tmp_path = tmp_path_factory.getbasetemp()
+    commands_tmp_dir = tmp_path / "testcommands0"
+
+    if not commands_tmp_dir.exists():
+        commands_tmp_dir.mkdir()
+
+    return commands_tmp_dir
 
 
 class TestCommands:
     """Tests the functions in the commands module."""
 
-    def test_commands(self, tmp_path, request):
-        def test_new():
-            args = Namespace(
-                command="new", name="test", type="console", lib=[]
-            )
-            args.name = tmp_path / args.name
+    def test_new(self, commands_dir):
+        args = Namespace(command="new", name="test", type="console", lib=[])
+        args.name = commands_dir / args.name
 
-            commands.new(args)
+        commands.new(args)
 
-            assert args.name.exists()
+        assert args.name.exists()
 
-        def test_run():
-            args = Namespace(command="run", name="test")
-            args.name = tmp_path / args.name
+    def test_run(self, commands_dir, request):
+        args = Namespace(command="run", name="test")
+        args.name = commands_dir / args.name
 
-            try:
-                commands.run(args)
-            finally:
-                os.chdir(request.config.invocation_dir)
+        try:
+            commands.run(args)
+        finally:
+            os.chdir(request.config.invocation_dir)
 
-        def test_delete():
-            args = Namespace(command="delete", name="test")
-            args.name = tmp_path / args.name
+    def test_delete(self, commands_dir):
+        args = Namespace(command="delete", name="test")
+        args.name = commands_dir / args.name
 
-            commands.delete(args)
+        commands.delete(args)
 
-            assert not args.name.exists()
-
-        test_new()
-        test_run()
-        test_delete()
+        assert not args.name.exists()
