@@ -51,3 +51,9 @@ The available options are:
 
 
 To configure the installation of `playgroundtools`, edit the [config.json](playground/config.json) file. An easier way to do so will be coming in a future update.
+The available options are:
+- `folders`: a list of folders that should be placed inside the playground upon creation.
+- `files`: maps file names to lists containing the contents of the file by line.
+- `lib`: the packages to be installed upon creation of the playground.
+- `module`: the module to run when the playground is executed via `-m {module}`.
+- `args`: the arguments to pass to the module upon execution (`-m {module} {args ...}`).
