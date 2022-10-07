@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 1.0.2
+Change `MANIFEST.in` to include `config.json`.
+
 ## Version 1.0.1
 Initial published release.
 
