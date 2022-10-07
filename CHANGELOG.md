@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 1.0.3
+Fix links to `config.json` in the README and add additional content.
+
 ## Version 1.0.2
 Change `MANIFEST.in` to include `config.json`.
 

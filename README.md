@@ -1,5 +1,7 @@
 # playgroundtools
 
+[![PyPI](https://img.shields.io/pypi/v/playgroundtools)](https://pypi.org/project/playgroundtools/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/playgroundtools)](https://pypi.org/project/playgroundtools/)
 [![Test](https://github.com/saibalusulapalem/playgroundtools/actions/workflows/test.yml/badge.svg)](https://github.com/saibalusulapalem/playgroundtools/actions/workflows/test.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
@@ -7,7 +9,7 @@ A command-line interface for managing playground projects.
 
 ## Overview
 
-This package is intended to provide a quick and easy way to set up Python "projects," each containing their own files, folders, virtual environment, and installed packages. This also includes the ability to run these projects (called "playgrounds") and delete them through use of the CLI. The exact configuration for the creation and execution of these playgrounds are found [here](playground/config.json), in the package's configuration file.
+This package is intended to provide a quick and easy way to set up Python "projects," each containing their own files, folders, virtual environment, and installed packages. This also includes the ability to run these projects (called "playgrounds") and delete them through use of the CLI. The exact configuration for the creation and execution of these playgrounds are found [here](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json), in the package's configuration file.
 
 ## Commands
 
@@ -50,7 +52,7 @@ The available options are:
 - `args`: the arguments to pass to the module (`-m {module} {args ...}`)
 
 
-To configure the installation of `playgroundtools`, edit the [config.json](playground/config.json) file. An easier way to do so will be coming in a future update.
+To configure the installation of `playgroundtools`, edit the [config.json](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json) file. An easier way to do so will be coming in a future update.
 The available options are:
 - `folders`: a list of folders that should be placed inside the playground upon creation.
 - `files`: maps file names to lists containing the contents of the file by line.
