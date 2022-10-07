@@ -23,7 +23,11 @@ class PGTypeNotFoundError(PlaygroundException):
     pass
 
 
-class PGOptionNotFoundError(PlaygroundException):
+class PGInvalidConfError(PlaygroundException):
+    pass
+
+
+class PGInvalidSettingError(PlaygroundException):
     pass
 
 
@@ -33,30 +37,32 @@ class PGDoesNotExistError(PlaygroundException):
 
 @contextmanager
 def playground_manager(args):
+    result = 0
     try:
         args.func(args)
     except (Exception, KeyboardInterrupt) as err:
-        if type(err) == PGDoesNotExistError:
-            result = f"The playground {err.args[0]} does not exist."
-        elif type(err) == PGConfigNotFoundError:
-            result = "The config file for this package could not be found."
-        elif type(err) == PGSettingsNotFoundError:
-            result = f"Settings for playground '{err.args[0]}' was not found."
-        elif type(err) == PGTypeNotFoundError:
-            result = f"The playground type '{err.args[0]}' is not configured."
-        elif type(err) == PGOptionNotFoundError:
-            result = f"'{err.args[0]}' is not set for type '{err.args[1]}'."
-        elif type(err) == FileNotFoundError:
-            result = f"The path {err.filename} does not exist."
-        elif type(err) == PGJSONFormatError:
-            result = f"JSON format error in '{err.args[0]}': {err.args[1]}"
-        else:
-            result = str(err)
-
-        # If any exception occurs, cleanup code will be executed
-        if args.command == "new":
-            playground_dir = get_playground_dir(args.name)
-            remove_if_exists(playground_dir)
-    else:
-        result = 0
+        result = get_result(err)
+        cleanup(args)
     yield result
+
+
+def get_result(err):
+    results = {
+        PGDoesNotExistError: "The playground {0} does not exist.",
+        PGConfigNotFoundError: "The configuration could not be found.",
+        PGSettingsNotFoundError: "Settings for playground '{0}' was not found.",
+        PGTypeNotFoundError: "The playground type '{0}' is not configured.",
+        PGInvalidConfError: "'{0}' is not set for type '{1}'.",
+        PGInvalidSettingError: "Settings options missing: {0}",
+        PGJSONFormatError: "JSON format error in '{0}': {1}",
+        KeyboardInterrupt: "Operation cancelled.",
+    }
+    result = results.get(type(err), str(err))
+    return result.format(*err.args)
+
+
+def cleanup(args):
+    """Cleans up the environment in case of an error."""
+    if args.command == "new":
+        playground_dir = get_playground_dir(args.name)
+        remove_if_exists(playground_dir)

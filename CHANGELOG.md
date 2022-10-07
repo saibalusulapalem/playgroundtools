@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 0.11.0
+Clean up the project by simplifying code.
+
 ## Version 0.10.0
 Add documentation to the README, split command testing into individual tests, and edit `build` workflow.
 

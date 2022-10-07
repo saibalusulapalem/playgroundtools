@@ -3,8 +3,9 @@ import json
 from .exceptions import (
     PGConfigNotFoundError,
     PGDoesNotExistError,
+    PGInvalidConfError,
+    PGInvalidSettingError,
     PGJSONFormatError,
-    PGOptionNotFoundError,
     PGSettingsNotFoundError,
     PGTypeNotFoundError,
 )
@@ -61,11 +62,22 @@ def clean_config(args, raw_config={}):
                 }
             )
         except KeyError as err:
-            raise PGOptionNotFoundError(err.args, args.type)
+            raise PGInvalidConfError(err.args, args.type)
     else:
         if not playground_dir.exists():
             raise PGDoesNotExistError(playground_dir)
         if args.command == "run":
             settings = get_settings(playground_dir)
-            config.update(settings=settings)
+            try:
+                config.update(
+                    {
+                        "settings": {
+                            "python": settings["python"],
+                            "module": settings["module"],
+                            "args": settings["args"],
+                        }
+                    }
+                )
+            except KeyError as err:
+                raise PGInvalidSettingError(err.args)
     return config
