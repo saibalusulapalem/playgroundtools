@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 1.0.0
+Initial published release.
+
 ## Version 0.11.0
 Clean up the project by simplifying code.
 
