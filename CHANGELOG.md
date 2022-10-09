@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 1.1.0
+Add the ability to edit configuration from the CLI and refine the code.
+
 ## Version 1.0.3
 Fix links to `config.json` in the README and add additional content.
 

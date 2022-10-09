@@ -34,3 +34,17 @@ def remove_if_exists(folder):
     """Remove 'folder' if it exists."""
     if folder.exists():
         rmtree(folder)
+
+
+def get_key(keys, config):
+    if not keys:
+        return config
+    return get_key(keys[1:], config[keys[0]])
+
+
+def set_key(keys, value, config):
+    if len(keys) == 1:
+        config.update({keys[0]: value})
+        return config
+    key = config[keys[0]]
+    return set_key(keys[1:], value, key)

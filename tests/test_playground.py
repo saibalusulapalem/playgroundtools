@@ -4,80 +4,14 @@ from pathlib import Path
 import pytest
 
 from ..playgroundtools import playground
-
-
-@pytest.fixture
-def raw_config():
-    """Represents part of the config.json file."""
-    return {
-        "console": {
-            "folders": [],
-            "files": {"main.py": ["print('Hello, World!')"]},
-            "lib": [],
-            "module": "main",
-            "args": [],
-        },
-        "jupyter": {
-            "folders": [],
-            "files": {
-                "dataprep.ipynb": [
-                    "{",
-                    ' "cells": [',
-                    "  {",
-                    '   "cell_type": "code",',
-                    '   "execution_count": null,',
-                    '   "metadata": {},',
-                    '   "outputs": [],',
-                    '   "source": []',
-                    "  }",
-                    " ],",
-                    ' "metadata": {},',
-                    ' "nbformat": 4,',
-                    ' "nbformat_minor": 1',
-                    "}",
-                ],
-                "analysis.ipynb": [
-                    "{",
-                    ' "cells": [',
-                    "  {",
-                    '   "cell_type": "code",',
-                    '   "execution_count": null,',
-                    '   "metadata": {},',
-                    '   "outputs": [],',
-                    '   "source": []',
-                    "  }",
-                    " ],",
-                    ' "metadata": {},',
-                    ' "nbformat": 4,',
-                    ' "nbformat_minor": 1',
-                    "}",
-                ],
-            },
-            "lib": [
-                "jupyter",
-                "jupyterlab",
-                "numpy",
-                "pandas",
-                "matplotlib",
-                "faker",
-                "arrow",
-            ],
-            "module": "jupyter",
-            "args": ["notebook", "analysis.ipynb"],
-        },
-    }
+from .fixtures import raw_config
 
 
 class TestPlayground:
     """Tests functions in the playground module."""
 
     def test_get_config(self, raw_config):
-        retrieved_config = playground.get_config()
-        modified_config = {
-            "console": retrieved_config["console"],
-            "jupyter": retrieved_config["jupyter"],
-        }
-        assert modified_config == raw_config
+        assert playground.get_config() == raw_config
 
     @pytest.mark.parametrize(
         ["args", "clean_config"],

@@ -37,13 +37,11 @@ class PGDoesNotExistError(PlaygroundException):
 
 @contextmanager
 def playground_manager(args):
-    result = 0
     try:
-        args.func(args)
-    except (Exception, KeyboardInterrupt) as err:
-        result = get_result(err)
+        yield args.func(args)
+    except Exception as err:
+        yield get_result(err)
         cleanup(args)
-    yield result
 
 
 def get_result(err):
@@ -55,7 +53,6 @@ def get_result(err):
         PGInvalidConfError: "'{0}' is not set for type '{1}'.",
         PGInvalidSettingError: "Settings options missing: {0}",
         PGJSONFormatError: "JSON format error in '{0}': {1}",
-        KeyboardInterrupt: "Operation cancelled.",
     }
     result = results.get(type(err), str(err))
     return result.format(*err.args)

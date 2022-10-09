@@ -4,7 +4,7 @@ import venv
 from shutil import rmtree
 
 from . import ABOUT_TEXT, APP_NAME, VERSION
-from .playground import clean_config, get_config
+from .playground import clean_config, get_config, set_config
 from .util import get_command, get_python_path, get_venv_dir, remove_if_exists
 
 # Functions for the parser
@@ -12,12 +12,12 @@ from .util import get_command, get_python_path, get_venv_dir, remove_if_exists
 
 def print_about():
     """Print text about the package."""
-    print(ABOUT_TEXT)
+    return ABOUT_TEXT
 
 
 def print_version():
     """Print the package version."""
-    print(f"{APP_NAME} version {VERSION}")
+    return f"{APP_NAME} version {VERSION}"
 
 
 # Functions for the 'new' command
@@ -35,7 +35,7 @@ def new(args):
     new_venv(config["dir"])
     install_reqs(config["dir"])
 
-    print("Playground creation successful.")
+    return "Playground creation successful."
 
 
 def new_playground(playground_dir):
@@ -93,7 +93,7 @@ def delete(args):
     config = clean_config(args)
     rmtree(config["dir"])
 
-    print("Playground deletion successful.")
+    return "Playground deletion successful."
 
 
 # Functions for the 'run' command
@@ -105,3 +105,20 @@ def run(args):
     cmd = get_command(**config["settings"])
     os.chdir(config["dir"])
     os.system(cmd)
+
+
+# Functions for the 'config' command
+
+
+def config(args):
+    """Read or modify the configuration."""
+    raw_config = get_config()
+
+    config = clean_config(args, raw_config)
+    if args.subcommand:
+        set_config(config)
+        return "Configuration modified successfully."
+    elif args.read:
+        return config["value"]
+    else:
+        return config

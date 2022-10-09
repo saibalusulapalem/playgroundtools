@@ -37,11 +37,21 @@ $ playground run console_app
 `delete`:
 Deletes a playground.
 ```
-$ playground delete -h name
+$ playground delete [-h] name
 ```
 For example:
 ```
 $ playground delete jupyter_tests
+```
+
+`config`:
+Reads or modifies the configuration.
+```
+$ playground config [-h] [-k READ] {add,delete,edit}
+```
+For example:
+```
+$ playground config edit api.folders "[\"api\", \"api/routers\"]"
 ```
 
 ## Configuration and Settings
@@ -52,7 +62,7 @@ The available options are:
 - `args`: the arguments to pass to the module (`-m {module} {args ...}`)
 
 
-To configure the installation of `playgroundtools`, edit the [config.json](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json) file. An easier way to do so will be coming in a future update.
+To configure the installation of `playgroundtools`, utilize the `config` command in the CLI. You can also do this by manually editing the [config.json](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json) file.
 The available options are:
 - `folders`: a list of folders that should be placed inside the playground upon creation.
 - `files`: maps file names to lists containing the contents of the file by line.

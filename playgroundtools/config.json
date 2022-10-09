@@ -2,14 +2,18 @@
     "console": {
         "folders": [],
         "files": {
-            "main.py": ["print('Hello, World!')"]
+            "main.py": [
+                "print('Hello, World!')"
+            ]
         },
         "lib": [],
         "module": "main",
         "args": []
     },
     "api": {
-        "folders": ["api"],
+        "folders": [
+            "api"
+        ],
         "files": {
             ".env": [
                 "SECRET_KEY='secret_key'",
@@ -112,11 +116,20 @@
             "api/__init__.py": []
         },
         "lib": [
-            "fastapi", "uvicorn", "httpie", "pydantic", "python-dotenv",
-            "sqlalchemy", "faker", "pyjwt"
+            "fastapi",
+            "uvicorn",
+            "httpie",
+            "pydantic",
+            "python-dotenv",
+            "sqlalchemy",
+            "faker",
+            "pyjwt"
         ],
         "module": "uvicorn",
-        "args": ["main:app", "--reload"]
+        "args": [
+            "main:app",
+            "--reload"
+        ]
     },
     "db": {
         "folders": [],
@@ -141,7 +154,10 @@
                 "Base.metadata.create_all()"
             ]
         },
-        "lib": ["sqlalchemy", "faker"],
+        "lib": [
+            "sqlalchemy",
+            "faker"
+        ],
         "module": "main",
         "args": []
     },
@@ -156,7 +172,10 @@
                 "# Make some requests here..."
             ]
         },
-        "lib": ["requests", "beautifulsoup4"],
+        "lib": [
+            "requests",
+            "beautifulsoup4"
+        ],
         "module": "main",
         "args": []
     },
@@ -197,10 +216,18 @@
             ]
         },
         "lib": [
-            "jupyter", "jupyterlab", "numpy", "pandas", "matplotlib", "faker",
+            "jupyter",
+            "jupyterlab",
+            "numpy",
+            "pandas",
+            "matplotlib",
+            "faker",
             "arrow"
         ],
         "module": "jupyter",
-        "args": ["notebook", "analysis.ipynb"]
+        "args": [
+            "notebook",
+            "analysis.ipynb"
+        ]
     }
 }
