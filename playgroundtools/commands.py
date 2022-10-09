@@ -12,12 +12,12 @@ from .util import get_command, get_python_path, get_venv_dir, remove_if_exists
 
 def print_about():
     """Print text about the package."""
-    return ABOUT_TEXT
+    print(ABOUT_TEXT)
 
 
 def print_version():
     """Print the package version."""
-    return f"{APP_NAME} version {VERSION}"
+    print(f"{APP_NAME} version {VERSION}")
 
 
 # Functions for the 'new' command

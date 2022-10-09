@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 1.1.1
+Fix `about` and `version` strings.
+
 ## Version 1.1.0
 Add the ability to edit configuration from the CLI and refine the code.
 
