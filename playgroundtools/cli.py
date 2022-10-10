@@ -15,8 +15,8 @@ def main():
     elif args.version:
         print_version()
     elif args.command:
-        with playground_manager(args) as result:
-            print(result)
+        with playground_manager(args):
+            print(args.func(args))
     else:
         parser.print_usage()
 

@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 1.2.0
+Add a GUI for managing playgrounds.
+
 ## Version 1.1.1
 Fix `about` and `version` strings.
 

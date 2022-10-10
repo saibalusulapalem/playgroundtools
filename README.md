@@ -5,11 +5,11 @@
 [![Test](https://github.com/saibalusulapalem/playgroundtools/actions/workflows/test.yml/badge.svg)](https://github.com/saibalusulapalem/playgroundtools/actions/workflows/test.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-A command-line interface for managing playground projects.
+An interface for managing playground projects.
 
 ## Overview
 
-This package is intended to provide a quick and easy way to set up Python "projects," each containing their own files, folders, virtual environment, and installed packages. This also includes the ability to run these projects (called "playgrounds") and delete them through use of the CLI. The exact configuration for the creation and execution of these playgrounds are found [here](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json), in the package's configuration file.
+This package is intended to provide a quick and easy way to set up Python "projects," each containing their own files, folders, virtual environment, and installed packages. This also includes the ability to run these projects (called **playgrounds**) and delete them. This can be done either through the CLI or through the interactive GUI (with limited capabilities). The exact configuration for the creation and execution of these playgrounds are found [here](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json), in the package's configuration file.
 
 ## Commands
 
@@ -53,6 +53,8 @@ For example:
 ```
 $ playground config edit api.folders "[\"api\", \"api/routers\"]"
 ```
+
+Invoking `playground-gui` will open the interactive GUI, allowing for the creation and deletion of playgrounds.
 
 ## Configuration and Settings
 Settings for a playground can be configured via its `settings.json` file.

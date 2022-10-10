@@ -9,9 +9,11 @@ DESCRIPTION = _metadata["Summary"]
 VERSION = _metadata["Version"]
 AUTHOR = _metadata["Author"]
 LICENSE = _metadata["License"]
+HOMEPAGE = _metadata["Home-page"]
 
 ABOUT_TEXT = f"""
 {APP_NAME} v {VERSION}
+{HOMEPAGE}
 
 {APP_TITLE}:
 

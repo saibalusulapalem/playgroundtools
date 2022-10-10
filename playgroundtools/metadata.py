@@ -13,5 +13,6 @@ def get_metadata():
             "Author": "author",
             "Version": "version",
             "License": "license",
+            "Home-page": "homepage",
         }
     return meta

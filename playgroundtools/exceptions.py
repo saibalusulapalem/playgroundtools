@@ -35,16 +35,28 @@ class PGDoesNotExistError(PlaygroundException):
     pass
 
 
+class PGNameNotEnteredError(PlaygroundException):
+    pass
+
+
+class PGTypeNotEnteredError(PlaygroundException):
+    pass
+
+
 @contextmanager
 def playground_manager(args):
+    """Cleans up the environment and prints errors in case of exceptions."""
     try:
-        yield args.func(args)
+        yield
     except Exception as err:
-        yield get_result(err)
+        print(get_result(err))
+        cleanup(args)
+    except KeyboardInterrupt:
         cleanup(args)
 
 
 def get_result(err):
+    """Returns a result based on an exception."""
     results = {
         PGDoesNotExistError: "The playground {0} does not exist.",
         PGConfigNotFoundError: "The configuration could not be found.",
@@ -53,6 +65,8 @@ def get_result(err):
         PGInvalidConfError: "'{0}' is not set for type '{1}'.",
         PGInvalidSettingError: "Settings options missing: {0}",
         PGJSONFormatError: "JSON format error in '{0}': {1}",
+        PGNameNotEnteredError: "The playground name has not been entered.",
+        PGTypeNotEnteredError: "The playground type has not been set.",
     }
     result = results.get(type(err), str(err))
     return result.format(*err.args)
@@ -61,5 +75,5 @@ def get_result(err):
 def cleanup(args):
     """Cleans up the environment in case of an error."""
     if args.command == "new":
-        playground_dir = get_playground_dir(args.name)
+        playground_dir = get_playground_dir(args)
         remove_if_exists(playground_dir)
