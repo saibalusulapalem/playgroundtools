@@ -19,6 +19,7 @@ class TestPlayground:
             (
                 Namespace(command="new", name="test", type="console", lib=[]),
                 {
+                    "verbosity": 1,
                     "dir": Path("test").resolve(),
                     "folders": ["requirements"],
                     "files": {
@@ -37,6 +38,7 @@ class TestPlayground:
                     lib=[],
                 ),
                 {
+                    "verbosity": 1,
                     "dir": Path("test/subfolder").resolve(),
                     "folders": ["requirements"],
                     "files": {

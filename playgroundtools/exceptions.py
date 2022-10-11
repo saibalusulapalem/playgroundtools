@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from tkinter import messagebox
 
 from .util import get_playground_dir, remove_if_exists
 
@@ -44,7 +45,7 @@ class PGTypeNotEnteredError(PlaygroundException):
 
 
 @contextmanager
-def playground_manager(args):
+def cli_manager(args):
     """Cleans up the environment and prints errors in case of exceptions."""
     try:
         yield
@@ -53,6 +54,25 @@ def playground_manager(args):
         cleanup(args)
     except KeyboardInterrupt:
         cleanup(args)
+
+
+@contextmanager
+def gui_manager(args, status):
+    """Shows errors and cleans up the environment in case of exceptions."""
+    try:
+        yield
+    except Exception as err:
+        result = get_result(err)
+        messagebox.showerror("Error", result)
+        set_status(result, status)
+        cleanup(args)
+
+
+def set_status(text, status=None):
+    if status:
+        status.set(text)
+    else:
+        print(text)
 
 
 def get_result(err):

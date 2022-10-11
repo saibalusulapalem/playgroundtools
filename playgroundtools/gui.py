@@ -1,7 +1,5 @@
 import tkinter as tk
 from argparse import Namespace
-from contextlib import contextmanager
-from tkinter import messagebox
 from webbrowser import open as open_url
 
 from . import HOMEPAGE
@@ -9,24 +7,11 @@ from .commands import delete, new
 from .exceptions import (
     PGNameNotEnteredError,
     PGTypeNotEnteredError,
-    cleanup,
-    get_result,
+    gui_manager,
 )
 from .playground import get_config
 from .views.about import AboutDialog
 from .views.main import MainWindow
-
-
-@contextmanager
-def alert_manager(args, status):
-    """Shows errors and cleans up the environment in case o exceptions."""
-    try:
-        yield
-    except Exception as err:
-        result = get_result(err)
-        messagebox.showerror("Error", result)
-        status.set(result)
-        cleanup(args)
 
 
 def main():
@@ -40,47 +25,37 @@ class App:
 
     def __init__(self):
         self.window = MainWindow()
-
         self.root = self.window.root
 
-        # Menu
-
-        self.window.bind("<<OpenAboutDialog>>", self.open_about)
-        self.window.bind("<<OpenHomepage>>", self.open_homepage)
-
-        # New
-
         self.new_view = self.window.new_view
-
-        self.config = get_config()
-        self.types = list(self.config.keys())
-
-        self.new_type_chooser = self.new_view.pg_type_field
-        self.new_type_chooser.configure(values=self.types)
-        self.new_type_chooser.bind("<<ComboboxSelected>>", self.refresh_type)
-
         self.new_file_preview = self.new_view.file_preview
-
         self.new_dir_preview = self.new_view.dir_view
-        self.new_dir_preview.bind("<<TreeviewSelect>>", self.refresh_file)
-
         self.new_btn = self.new_view.new_btn
-        self.new_btn.configure(command=self.new_cmd)
-
-        # Delete
+        self.new_type_chooser = self.new_view.pg_type_field
 
         self.delete_view = self.window.delete_view
-
         self.delete_btn = self.delete_view.delete_btn
-        self.delete_btn.configure(command=self.delete_cmd)
-
-        # Status
 
         self.status = self.window.status
 
-    def run(self):
-        """Proxy for the window's run method."""
-        self.window.run()
+        self._set_bindings()
+        self._set_configurations()
+
+    def _set_bindings(self):
+        """Binds all events of the app."""
+        self.window.bind("<<OpenAboutDialog>>", self.open_about)
+        self.window.bind("<<OpenHomepage>>", self.open_homepage)
+        self.new_type_chooser.bind("<<ComboboxSelected>>", self.refresh_type)
+        self.new_dir_preview.bind("<<TreeviewSelect>>", self.refresh_file)
+
+    def _set_configurations(self):
+        """Sets up any unconfigured widgets."""
+        self.config = get_config()
+        self.types = list(self.config.keys())
+        self.new_type_chooser.configure(values=self.types)
+
+        self.new_btn.configure(command=self.new_cmd)
+        self.delete_btn.configure(command=self.delete_cmd)
 
     def refresh_type(self, event=None):
         """Refreshes the directory preview upon a type change."""
@@ -117,20 +92,19 @@ class App:
         type = self.new_view.pg_type.get()
 
         args = Namespace(command="new", func=new, name=name, type=type, lib=[])
-        self.main(args)
+        self.run_command(args)
 
     def delete_cmd(self):
         """Runs the delete function from info given in the GUI."""
         name = self.delete_view.name.get()
 
         args = Namespace(command="delete", func=delete, name=name)
-        self.main(args)
+        self.run_command(args)
 
-    def main(self, args):
+    def run_command(self, args):
         """Dispatches a command based on args."""
-        with alert_manager(args, self.status):
-            self._check_requirements(args)
-            self.status.set(args.func(args))
+        with gui_manager(args, self.status):
+            args.func(args, self.status)
 
     def _check_requirements(self, args):
         if not args.name:
@@ -142,3 +116,7 @@ class App:
     def open_homepage(self, event=None):
         """Opens the homepage in the default web browser."""
         open_url(HOMEPAGE)
+
+    def run(self):
+        """Proxy for the window's run method."""
+        self.window.run()

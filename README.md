@@ -16,12 +16,12 @@ This package is intended to provide a quick and easy way to set up Python "proje
 `new`:
 Creates a playground.
 ```
-$ playground new [-h] [-i LIB [LIB ...]] -n NAME type
+$ playground new [-h] [-i LIB [LIB ...]] [-v] -n NAME type
 ```
 For example, to create an api project:
 ```
 # We can specify a list of optional packages to install via pip by using the `-i` option
-$ playground new api -n my_api -i requests
+$ playground new api -n my_api -i requests -v  # verbosity can be set with the -v option
 ```
 
 `run`:
@@ -53,6 +53,8 @@ For example:
 ```
 $ playground config edit api.folders "[\"api\", \"api/routers\"]"
 ```
+
+## Graphical User Interface
 
 Invoking `playground-gui` will open the interactive GUI, allowing for the creation and deletion of playgrounds.
 

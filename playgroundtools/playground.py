@@ -13,15 +13,20 @@ from .resources import load_file_resources, load_text_resources
 from .util import get_key, get_playground_dir, set_key
 
 
+def load_json(name, input):
+    try:
+        return json.loads(input)
+    except json.JSONDecodeError as err:
+        raise PGJSONFormatError(name, str(err))
+
+
 def get_config():
     """Get the configuration for the package."""
     try:
         config_json = load_text_resources("config.json")
-        return json.loads(config_json)
+        return load_json("config.json", config_json)
     except FileNotFoundError:
         raise PGConfigNotFoundError
-    except json.JSONDecodeError as err:
-        raise PGJSONFormatError("config.json", str(err))
 
 
 def set_config(config):
@@ -38,9 +43,7 @@ def get_settings(playground_dir):
     settings_path = playground_dir / "settings.json"
     try:
         with open(settings_path) as f:
-            return json.load(f)
-    except json.JSONDecodeError as err:
-        raise PGJSONFormatError(settings_path, str(err))
+            return load_json(settings_path, f.read())
     except FileNotFoundError:
         raise PGSettingsNotFoundError(playground_dir)
 
@@ -72,8 +75,10 @@ def clean_config_new(args, raw_config):
     except KeyError:
         raise PGTypeNotFoundError(args.type)
     lib = type_config["lib"] + args.lib
+    verbosity = args.verbose if hasattr(args, "verbose") else 1
     try:
         return {
+            "verbosity": verbosity,
             "folders": type_config["folders"] + ["requirements"],
             "files": {
                 **type_config["files"],
@@ -108,10 +113,7 @@ def clean_config_config(args, raw_config):
     """Cleans the configuration for the config command."""
     new_config = raw_config
     if args.subcommand == "add":
-        try:
-            new_config[args.type] = json.loads(args.value)
-        except json.JSONDecodeError as err:
-            raise PGJSONFormatError("input", str(err))
+        new_config[args.type] = load_json("input", args.value)
 
     elif args.subcommand == "delete":
         try:
@@ -121,10 +123,7 @@ def clean_config_config(args, raw_config):
 
     elif args.subcommand == "edit":
         keys = args.key.split(".")
-        try:
-            value = json.loads(args.value)
-        except json.JSONDecodeError as err:
-            raise PGJSONFormatError("input", str(err))
+        value = load_json("input", args.value)
         set_key(keys, value, new_config)
 
     elif args.read:

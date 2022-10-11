@@ -4,6 +4,7 @@ import venv
 from shutil import rmtree
 
 from . import ABOUT_TEXT, APP_NAME, VERSION
+from .exceptions import set_status
 from .playground import clean_config, get_config, set_config
 from .util import get_command, get_python_path, get_venv_dir, remove_if_exists
 
@@ -23,45 +24,59 @@ def print_version():
 # Functions for the 'new' command
 
 
-def new(args):
+def new(args, status=None):
     """Create a new playground."""
     raw_config = get_config()
     config = clean_config(args, raw_config)
+    vb = config["verbosity"]
 
-    new_playground(config["dir"])
-    new_folders(config["dir"], config["folders"])
-    new_files(config["dir"], config["files"])
-    new_settings(config["dir"], config["settings"])
-    new_venv(config["dir"])
-    install_reqs(config["dir"])
+    new_playground(config["dir"], verbose=vb, status=status)
+    new_folders(config["dir"], config["folders"], verbose=vb, status=status)
+    new_files(config["dir"], config["files"], verbose=vb, status=status)
+    new_settings(config["dir"], config["settings"], verbose=vb, status=status)
+    new_venv(config["dir"], verbose=vb, status=status)
+    install_reqs(config["dir"], verbose=vb, status=status)
 
-    return "Playground creation successful."
+    set_status("Playground creation successful.", status)
 
 
-def new_playground(playground_dir):
+def new_playground(playground_dir, verbose=0, status=None):
     """Create the playground folder."""
+    if verbose:
+        set_status("Creating the playground folder...", status)
     remove_if_exists(playground_dir)
     playground_dir.mkdir()
 
 
-def new_folders(playground_dir, folders):
+def new_folders(playground_dir, folders, verbose=0, status=None):
     """Create all folders for a playground."""
+    if verbose:
+        set_status("Creating necessary folders...", status)
     for folder in folders:
         folder_path = playground_dir / folder
+        if verbose > 1:
+            print("\t")
+            set_status(f"Creating {folder_path}", status)
         folder_path.mkdir(exist_ok=True)
 
 
-def new_files(playground_dir, files):
+def new_files(playground_dir, files, verbose=0, status=None):
     """Create all files for a playground."""
+    if verbose:
+        set_status("Creating necessary files...", status)
     for name, content in files.items():
         file_path = playground_dir / name
+        if verbose > 1:
+            set_status(f"\tCreating {file_path}", status)
         with open(file_path, "w") as f:
             for line in content:
                 print(line, file=f)
 
 
-def new_settings(playground_dir, settings):
+def new_settings(playground_dir, settings, verbose=0, status=None):
     """Create the settings file for a playground."""
+    if verbose:
+        set_status("Creating the settings file...", status)
     venv_path = get_venv_dir(playground_dir)
     python_path = get_python_path(venv_path)
     settings = {"python": str(python_path), **settings}
@@ -71,14 +86,18 @@ def new_settings(playground_dir, settings):
         json.dump(settings, f, indent=4)
 
 
-def new_venv(playground_dir):
+def new_venv(playground_dir, verbose=0, status=None):
     """Create a virtual environment for a playground."""
+    if verbose:
+        set_status("Creating the virtual environment...", status)
     venv_path = get_venv_dir(playground_dir)
     venv.create(venv_path, with_pip=True)
 
 
-def install_reqs(playground_dir):
+def install_reqs(playground_dir, verbose=0, status=None):
     """Install the packages from a playground's requirements file."""
+    if verbose:
+        set_status("Installing requirements...", status)
     venv_path = get_venv_dir(playground_dir)
     python_path = get_python_path(venv_path)
     reqs_path = playground_dir / "requirements" / "requirements.in"
@@ -88,12 +107,12 @@ def install_reqs(playground_dir):
 # Functions for the 'delete' command
 
 
-def delete(args):
+def delete(args, status=None):
     """Delete a playground."""
     config = clean_config(args)
     rmtree(config["dir"])
 
-    return "Playground deletion successful."
+    set_status("Playground deletion successful.", status)
 
 
 # Functions for the 'run' command
@@ -110,14 +129,14 @@ def run(args):
 # Functions for the 'config' command
 
 
-def config(args):
+def config(args, status=None):
     """Read or modify the configuration."""
     raw_config = get_config()
 
     config = clean_config(args, raw_config)
     if args.subcommand:
         set_config(config)
-        return "Configuration modified successfully."
+        set_status("Configuration modified successfully.", status)
     elif args.read:
         return config["value"]
     else:

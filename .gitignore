@@ -37,3 +37,6 @@ MANIFEST
 # Environments
 .venv
 .build
+
+# VSCode
+.vscode

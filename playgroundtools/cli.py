@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 
 from . import APP_NAME, DESCRIPTION
 from .commands import config, delete, new, print_about, print_version, run
-from .exceptions import playground_manager
+from .exceptions import cli_manager
 
 
 def main():
@@ -15,8 +15,8 @@ def main():
     elif args.version:
         print_version()
     elif args.command:
-        with playground_manager(args):
-            print(args.func(args))
+        with cli_manager(args):
+            args.func(args)
     else:
         parser.print_usage()
 
@@ -52,6 +52,13 @@ def get_parser():
         nargs="+",
         default=[],
         help="The packages to be installed via pip upon creation.",
+    )
+    new_cmd.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="Set the verbosity level.",
     )
     new_cmd.add_argument(
         "-n",
