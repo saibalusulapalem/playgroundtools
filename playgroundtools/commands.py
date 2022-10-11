@@ -67,7 +67,8 @@ def new_files(playground_dir, files, verbose=0, status=None):
     for name, content in files.items():
         file_path = playground_dir / name
         if verbose > 1:
-            set_status(f"\tCreating {file_path}", status)
+            print("\t")
+            set_status(f"Creating {file_path}", status)
         with open(file_path, "w") as f:
             for line in content:
                 print(line, file=f)
@@ -138,6 +139,14 @@ def config(args, status=None):
         set_config(config)
         set_status("Configuration modified successfully.", status)
     elif args.read:
-        return config["value"]
+        value = config["value"]
+        print_json(value)
+        return value
     else:
+        print_json(config)
         return config
+
+
+def print_json(value):
+    value_json = json.dumps(value, indent=4)
+    print(value_json)

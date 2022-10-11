@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 1.3.1
+- Update README
+- Fix config read issue
+- Minor status bug fix
+
 ## Version 1.3.0
 - Add verbosity to CLI
 - Add status management for the CLI and GUI
