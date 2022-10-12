@@ -126,7 +126,9 @@ def clean_config_add(args, config):
     """Cleans the configuration for the config add command."""
     cleaned = config
     if args.type:
-        cleaned[args.type] = load_json("input", args.value)
+        cleaned[args.type] = {}
+        if args.value:
+            cleaned[args.type] = load_json("input", args.value)
     elif args.file:
         file_path = get_full_path(args.file)
         with open(file_path) as f:

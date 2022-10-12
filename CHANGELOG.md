@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 1.5.1
+- Fix README `config` commands
+- Fix README JSON example
+- Fix `config add` with no value specified
+
 ## Version 1.5.0
 - Add additional tests to check for exceptions
 - Edit test workflow

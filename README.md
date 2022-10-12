@@ -81,7 +81,7 @@ The available options are:
 `config add`:
 Adds a new playground type to the configuration.
 ```shell
-$ playground config add [-h] type value
+$ playground config add [-h] [-t TYPE] [-v VALUE] [-f FILE]
 ```
 For example:
 ```shell
@@ -95,7 +95,7 @@ $ playground config add -f user_config.json
 `config delete`:
 Deletes a playground type from the configuration.
 ```shell
-$ playground config delete [-h] type
+$ playground config delete [-h] [-t TYPE] [-f FILE]
 ```
 For example:
 ```shell
@@ -121,9 +121,9 @@ $ playground config edit "api.folders" "[\"api\", \"api/routers\", \"api/db\"]"
 The [config.json](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json) file simply contains configurations for different types of playgrounds. The settings for each type are specified by the available options aforementioned.
 
 For example, to create a `package` type, one could use:
-```json
+```json5
 {
-    ...
+    // ...
     "package": {
         "folders": [
             "src",
