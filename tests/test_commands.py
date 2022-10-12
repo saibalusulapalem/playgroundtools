@@ -6,56 +6,55 @@ from argparse import Namespace
 import pytest
 
 from ..playgroundtools import commands
+from ..playgroundtools.resources import load_file_resource
 from .fixtures import raw_config
-
-
-@pytest.fixture
-def example_playground(tmp_path):
-    playground_dir = tmp_path / "test"
-
-    reqs_dir = playground_dir / "requirements"
-    reqs_path = reqs_dir / "requirements.in"
-
-    venv_path = playground_dir / ".venv"
-
-    main_path = playground_dir / "main.py"
-
-    settings_path = playground_dir / "settings.json"
-
-    return {
-        "dir": playground_dir,
-        "reqs_dir": reqs_dir,
-        "reqs_path": reqs_path,
-        "venv": venv_path,
-        "file": main_path,
-        "settings": settings_path,
-    }
-
-
-@pytest.fixture
-def existing_playground(example_playground):
-    paths = example_playground
-
-    paths["dir"].mkdir()
-
-    paths["reqs_dir"].mkdir()
-    paths["reqs_path"].touch()
-
-    venv.create(paths["venv"], with_pip=True)
-    python_path = paths["venv"] / "bin" / "python"
-    alt_python_path = paths["venv"] / "Scripts" / "python.exe"
-    python = python_path if python_path.exists() else alt_python_path
-
-    paths["file"].touch()
-    paths["file"].write_text("print('Hello, World!')\n")
-
-    settings = {"python": str(python), "module": "main", "args": []}
-    paths["settings"].touch()
-    paths["settings"].write_text(json.dumps(settings, indent=4))
 
 
 class TestPGCommands:
     """Tests the playground-related functions in the commands module."""
+
+    @pytest.fixture
+    def example_playground(self, tmp_path):
+        playground_dir = tmp_path / "test"
+
+        reqs_dir = playground_dir / "requirements"
+        reqs_path = reqs_dir / "requirements.in"
+
+        venv_path = playground_dir / ".venv"
+
+        main_path = playground_dir / "main.py"
+
+        settings_path = playground_dir / "settings.json"
+
+        return {
+            "dir": playground_dir,
+            "reqs_dir": reqs_dir,
+            "reqs_path": reqs_path,
+            "venv": venv_path,
+            "file": main_path,
+            "settings": settings_path,
+        }
+
+    @pytest.fixture
+    def existing_playground(self, example_playground):
+        paths = example_playground
+
+        paths["dir"].mkdir()
+
+        paths["reqs_dir"].mkdir()
+        paths["reqs_path"].touch()
+
+        venv.create(paths["venv"], with_pip=True)
+        python_path = paths["venv"] / "bin" / "python"
+        alt_python_path = paths["venv"] / "Scripts" / "python.exe"
+        python = python_path if python_path.exists() else alt_python_path
+
+        paths["file"].touch()
+        paths["file"].write_text("print('Hello, World!')\n")
+
+        settings = {"python": str(python), "module": "main", "args": []}
+        paths["settings"].touch()
+        paths["settings"].write_text(json.dumps(settings, indent=4))
 
     def test_new(self, example_playground, tmp_path):
         args = Namespace(command="new", name="test", type="console", lib=[])
@@ -87,6 +86,18 @@ class TestPGCommands:
 class TestConfCommands:
     """Tests the config-related functions in the commands module."""
 
+    @pytest.fixture
+    def example_type(self):
+        return {
+            "test": {
+                "folders": [],
+                "files": {"main.py": ["print('test')"]},
+                "lib": [],
+                "module": ["main"],
+                "args": [],
+            }
+        }
+
     def test_config_read_all(self, raw_config):
         args = Namespace(command="config", subcommand=None, read=None)
         assert commands.config(args) == raw_config
@@ -94,3 +105,65 @@ class TestConfCommands:
     def test_config_read(self, raw_config):
         args = Namespace(command="config", subcommand=None, read="api.files")
         assert commands.config(args) == raw_config["api"]["files"]
+
+    def test_config_add(self, raw_config, example_type):
+        example_type_json = json.dumps(example_type["test"])
+        args = Namespace(
+            command="config",
+            subcommand="add",
+            type="test",
+            value=example_type_json,
+            file=None,
+        )
+        modified_config = {**raw_config, **example_type}
+        assert commands.config(args) == modified_config
+
+    def test_config_add_file(self, raw_config, example_type, tmp_path):
+        example_file = tmp_path / "test.json"
+        with open(example_file, "w") as f:
+            json.dump(example_type, f)
+        modified_config = {**raw_config, **example_type}
+        args = Namespace(
+            command="config",
+            subcommand="add",
+            type=None,
+            value=None,
+            file=example_file,
+        )
+        assert commands.config(args) == modified_config
+
+    def test_config_delete(self, raw_config, example_type):
+        modified_config = {**raw_config, **example_type}
+        with load_file_resource("config.json") as config_path:
+            with open(config_path, "w") as f:
+                json.dump(modified_config, f)
+        args = Namespace(
+            command="config", subcommand="delete", type="test", file=None
+        )
+        assert commands.config(args) == raw_config
+
+    def test_config_delete_file(self, raw_config, example_type, tmp_path):
+        config = {**raw_config, **example_type}
+        example_file = tmp_path / "test.json"
+        with load_file_resource("config.json") as config_path:
+            with open(config_path, "w") as f:
+                json.dump(config, f)
+        with open(example_file, "w") as f:
+            json.dump(example_type, f)
+        args = Namespace(
+            command="config", subcommand="delete", type=None, file=example_file
+        )
+        assert commands.config(args) == raw_config
+
+    def test_config_edit(self, raw_config):
+        modified_value = ["api", "api/routers", "api/db"]
+        modified_value_json = '["api", "api/routers", "api/db"]'
+        args = Namespace(
+            command="config",
+            subcommand="edit",
+            key="api.folders",
+            value=modified_value_json,
+        )
+        modified_config = raw_config
+        modified_config["api"]["folders"] = modified_value
+        assert commands.config(args) == modified_config

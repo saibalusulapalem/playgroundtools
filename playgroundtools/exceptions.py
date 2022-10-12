@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 from tkinter import messagebox
 
-from .util import get_playground_dir, remove_if_exists
+from .util import get_full_path, remove_if_exists
 
 
 class PlaygroundException(Exception):
@@ -17,10 +17,6 @@ class PGSettingsNotFoundError(PlaygroundException):
 
 
 class PGJSONFormatError(PlaygroundException):
-    pass
-
-
-class PGTypeNotFoundError(PlaygroundException):
     pass
 
 
@@ -81,8 +77,7 @@ def get_result(err):
         PGDoesNotExistError: "The playground {0} does not exist.",
         PGConfigNotFoundError: "The configuration could not be found.",
         PGSettingsNotFoundError: "Settings for playground '{0}' was not found.",
-        PGTypeNotFoundError: "The playground type '{0}' is not configured.",
-        PGInvalidConfError: "'{0}' is not set for type '{1}'.",
+        PGInvalidConfError: "'{0}' was not found in the configuration.",
         PGInvalidSettingError: "Settings options missing: {0}",
         PGJSONFormatError: "JSON format error in '{0}': {1}",
         PGNameNotEnteredError: "The playground name has not been entered.",
@@ -95,5 +90,5 @@ def get_result(err):
 def cleanup(args):
     """Cleans up the environment in case of an error."""
     if args.command == "new":
-        playground_dir = get_playground_dir(args)
+        playground_dir = get_full_path(args.name)
         remove_if_exists(playground_dir)

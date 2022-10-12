@@ -18,9 +18,9 @@ class TestUtil:
             (Namespace(name="./current_dir"), "./current_dir"),
         ],
     )
-    def test_get_playground_dir(self, args, playground_dir):
+    def test_get_full_path(self, args, playground_dir):
         playground_dir = Path(playground_dir).resolve()
-        assert util.get_playground_dir(args) == playground_dir
+        assert util.get_full_path(args.name) == playground_dir
 
     @pytest.mark.parametrize(
         ["playground_dir", "venv_path"],

@@ -87,6 +87,10 @@ For example:
 ```shell
 $ playground config add "package" "{\"folders\": [\"src\"], \"files\": {\"setup.cfg\": []}...}"
 ```
+Configuration can also be added from a custom JSON file:
+```shell
+$ playground config add -f user_config.json
+```
 
 `config delete`:
 Deletes a playground type from the configuration.
@@ -96,6 +100,10 @@ $ playground config delete [-h] type
 For example:
 ```shell
 $ playground config delete "package"
+```
+Keys from a custom config file can also be deleted:
+```shell
+$ playground config delete -f user_config.json
 ```
 
 `config edit`:

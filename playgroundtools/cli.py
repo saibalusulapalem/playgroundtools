@@ -93,15 +93,25 @@ def get_parser():
     config_add_cmd = config_subcommands.add_parser(
         "add", help="Add a playground type to the config file."
     )
-    config_add_cmd.add_argument("type", help="The name of the new type.")
     config_add_cmd.add_argument(
-        "value", help="The value assigned to the new type (in JSON)"
+        "-t", "--type", help="The name of the new type."
+    )
+    config_add_cmd.add_argument(
+        "-v", "--value", help="The value assigned to the new type (in JSON)"
+    )
+    config_add_cmd.add_argument(
+        "-f", "--file", help="Add options from a custom configuration file."
     )
 
     config_delete_cmd = config_subcommands.add_parser(
         "delete", help="Delete a playground type from the config file."
     )
-    config_delete_cmd.add_argument("type", help="The type to delete.")
+    config_delete_cmd.add_argument("-t", "--type", help="The type to delete.")
+    config_delete_cmd.add_argument(
+        "-f",
+        "--file",
+        help="Delete options specified in a custom configuration file.",
+    )
 
     config_edit_cmd = config_subcommands.add_parser(
         "edit", help="Edit an option for an existing playground type."

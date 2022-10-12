@@ -1,10 +1,14 @@
+import json
+
 import pytest
+
+from ..playgroundtools.resources import load_file_resource
 
 
 @pytest.fixture
 def raw_config():
     """Represents the JSON-decoded config.json file."""
-    return {
+    result = {
         "console": {
             "folders": [],
             "files": {"main.py": ["print('Hello, World!')"]},
@@ -219,3 +223,9 @@ def raw_config():
             "args": ["notebook", "analysis.ipynb"],
         },
     }
+    result = json.dumps(result, indent=4)
+    yield json.loads(result)
+
+    with load_file_resource("config.json") as config_path:
+        with open(config_path, "w") as f:
+            f.write(result)

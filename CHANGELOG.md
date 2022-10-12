@@ -1,5 +1,13 @@
 # Change Log
 
+## Version 1.4.0
+- Add ability to read from custom config files
+- Add more config tests
+- Simplify config functions
+- Simplify config exceptions
+- Fix config key read bug
+- Fix `load_file_resource` path issue
+
 ## Version 1.3.1
 - Update README
 - Fix config read issue

@@ -55,7 +55,7 @@ def new_folders(playground_dir, folders, verbose=0, status=None):
     for folder in folders:
         folder_path = playground_dir / folder
         if verbose > 1:
-            print("\t")
+            print("\t", end="")
             set_status(f"Creating {folder_path}", status)
         folder_path.mkdir(exist_ok=True)
 
@@ -67,7 +67,7 @@ def new_files(playground_dir, files, verbose=0, status=None):
     for name, content in files.items():
         file_path = playground_dir / name
         if verbose > 1:
-            print("\t")
+            print("\t", end="")
             set_status(f"Creating {file_path}", status)
         with open(file_path, "w") as f:
             for line in content:
@@ -144,7 +144,7 @@ def config(args, status=None):
         return value
     else:
         print_json(config)
-        return config
+    return config
 
 
 def print_json(value):

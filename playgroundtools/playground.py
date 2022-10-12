@@ -7,10 +7,9 @@ from .exceptions import (
     PGInvalidSettingError,
     PGJSONFormatError,
     PGSettingsNotFoundError,
-    PGTypeNotFoundError,
 )
-from .resources import load_file_resources, load_text_resources
-from .util import get_key, get_playground_dir, set_key
+from .resources import load_file_resource, load_text_resource
+from .util import get_full_path, get_key, set_key
 
 
 def load_json(name, input):
@@ -23,7 +22,7 @@ def load_json(name, input):
 def get_config():
     """Get the configuration for the package."""
     try:
-        config_json = load_text_resources("config.json")
+        config_json = load_text_resource("config.json")
         return load_json("config.json", config_json)
     except FileNotFoundError:
         raise PGConfigNotFoundError
@@ -31,9 +30,9 @@ def get_config():
 
 def set_config(config):
     try:
-        config_path = load_file_resources("config.json")
-        with open(config_path, "w") as f:
-            json.dump(config, f, indent=4)
+        with load_file_resource("config.json") as config_path:
+            with open(config_path, "w") as f:
+                json.dump(config, f, indent=4)
     except FileNotFoundError:
         raise PGConfigNotFoundError
 
@@ -54,7 +53,7 @@ def clean_config(args, raw_config={}):
     if args.command == "config":
         cleaned = clean_config_config(args, raw_config)
     else:
-        playground_dir = get_playground_dir(args)
+        playground_dir = get_full_path(args.name)
         if args.command == "new":
             cleaned = clean_config_new(args, raw_config)
         else:
@@ -73,7 +72,7 @@ def clean_config_new(args, raw_config):
     try:
         type_config = raw_config[args.type]
     except KeyError:
-        raise PGTypeNotFoundError(args.type)
+        raise PGInvalidConfError(args.type)
     lib = type_config["lib"] + args.lib
     verbosity = args.verbose if hasattr(args, "verbose") else 1
     try:
@@ -91,7 +90,9 @@ def clean_config_new(args, raw_config):
             },
         }
     except KeyError as err:
-        raise PGInvalidConfError(err.args, args.type)
+        keys = (args.type, *err.args)
+        key = get_key(keys)
+        raise PGInvalidConfError(key)
 
 
 def clean_config_run(playground_dir):
@@ -112,23 +113,62 @@ def clean_config_run(playground_dir):
 def clean_config_config(args, raw_config):
     """Cleans the configuration for the config command."""
     new_config = raw_config
-    if args.subcommand == "add":
-        new_config[args.type] = load_json("input", args.value)
+    subcommands = {
+        "add": clean_config_add,
+        "delete": clean_config_delete,
+        "edit": clean_config_edit,
+    }
+    func = subcommands.get(args.subcommand, clean_config_read)
+    return func(args, new_config)
 
-    elif args.subcommand == "delete":
-        try:
-            del new_config[args.type]
-        except KeyError:
-            raise PGTypeNotFoundError(args.type)
 
-    elif args.subcommand == "edit":
-        keys = args.key.split(".")
-        value = load_json("input", args.value)
-        set_key(keys, value, new_config)
+def clean_config_add(args, config):
+    """Cleans the configuration for the config add command."""
+    cleaned = config
+    if args.type:
+        cleaned[args.type] = load_json("input", args.value)
+    elif args.file:
+        file_path = get_full_path(args.file)
+        with open(file_path) as f:
+            custom_config = load_json(file_path, f.read())
+        cleaned.update(custom_config)
+    return cleaned
 
-    elif args.read:
+
+def clean_config_delete(args, config):
+    """Cleans the configuration for the config delete command."""
+    cleaned = config
+    try:
+        if args.type:
+            del cleaned[args.type]
+        elif args.file:
+            file_path = get_full_path(args.file)
+            with open(file_path) as f:
+                custom_config = load_json(file_path, f.read())
+            for key in custom_config:
+                del cleaned[key]
+    except KeyError:
+        raise PGInvalidConfError(args.type)
+    return cleaned
+
+
+def clean_config_edit(args, config):
+    """Cleans the configuration for the config edit command."""
+    cleaned = config
+    keys = args.key.split(".")
+    value = load_json("input", args.value)
+    set_key(keys, value, cleaned)
+    return cleaned
+
+
+def clean_config_read(args, config):
+    """Cleans the configuration for the config command with no args."""
+    cleaned = config
+    if args.read:
         keys = args.read.split(".")
-        value = get_key(keys, new_config)
-        new_config = {"value": value}
-
-    return new_config
+        try:
+            value = get_key(keys, cleaned)
+        except KeyError:
+            raise PGInvalidConfError(args.read)
+        cleaned = {"value": value}
+    return cleaned

@@ -2,9 +2,9 @@ from pathlib import Path
 from shutil import rmtree
 
 
-def get_playground_dir(args):
+def get_full_path(name):
     """Retrieve a playground folder from 'args'."""
-    return Path(args.name).resolve()
+    return Path(name).resolve()
 
 
 def get_venv_dir(playground_dir):
