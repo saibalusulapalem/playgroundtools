@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 1.5.0
+- Add additional tests to check for exceptions
+- Edit test workflow
+- Simplify test fixtures
+
 ## Version 1.4.0
 - Add ability to read from custom config files
 - Add more config tests

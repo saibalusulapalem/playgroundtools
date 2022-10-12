@@ -123,30 +123,33 @@ The [config.json](https://github.com/saibalusulapalem/playgroundtools/blob/main/
 For example, to create a `package` type, one could use:
 ```json
 {
-    "folders": [
-        "src",
-        "tests"
-    ],
-    "files": {
-        "setup.cfg": [
-            // File contents go here...
+    ...
+    "package": {
+        "folders": [
+            "src",
+            "tests"
         ],
-        "pyproject.toml": [
-            // File contents go here...
+        "files": {
+            "setup.cfg": [
+                // File contents go here...
+            ],
+            "pyproject.toml": [
+                // File contents go here...
+            ],
+            "setup.py": [
+                // File contents go here...
+            ]
+        },
+        "lib": [
+            "setuptools",
+            "black",
+            "flake8",
+            "isort",
+            "build",
+            "twine"
         ],
-        "setup.py": [
-            // File contents go here...
-        ]
-    },
-    "lib": [
-        "setuptools",
-        "black",
-        "flake8",
-        "isort",
-        "build",
-        "twine"
-    ],
-    "module": "",
-    "args": []
+        "module": "",
+        "args": []
+    }
 }
 ```
