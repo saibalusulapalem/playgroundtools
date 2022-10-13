@@ -79,6 +79,16 @@ def get_parser():
         help="Run a playground by running the commands in its settings file.",
     )
     run_cmd.add_argument("name", help="The name of the playground to run.")
+    run_cmd.add_argument(
+        "-m", "--module", help="Override the default module to run."
+    )
+    run_cmd.add_argument(
+        "-a",
+        "--args",
+        nargs="+",
+        default=[],
+        help="Override the arguments to run the module with.",
+    )
     run_cmd.set_defaults(func=run)
 
     config_cmd = subcommands.add_parser(

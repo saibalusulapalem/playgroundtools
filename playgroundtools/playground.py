@@ -61,7 +61,7 @@ def clean_config(args, raw_config={}):
             if not playground_dir.exists():
                 raise PGDoesNotExistError(playground_dir)
             if args.command == "run":
-                cleaned = clean_config_run(playground_dir)
+                cleaned = clean_config_run(args, playground_dir)
         config.update(dir=playground_dir)
     config.update(cleaned)
     return config
@@ -74,10 +74,9 @@ def clean_config_new(args, raw_config):
     except KeyError:
         raise PGInvalidConfError(args.type)
     lib = type_config["lib"] + args.lib
-    verbosity = args.verbose if hasattr(args, "verbose") else 1
     try:
         return {
-            "verbosity": verbosity,
+            "verbosity": args.verbose,
             "folders": type_config["folders"] + ["requirements"],
             "files": {
                 **type_config["files"],
@@ -91,19 +90,19 @@ def clean_config_new(args, raw_config):
         }
     except KeyError as err:
         keys = (args.type, *err.args)
-        key = get_key(keys)
+        key = ".".join(keys)
         raise PGInvalidConfError(key)
 
 
-def clean_config_run(playground_dir):
+def clean_config_run(args, playground_dir):
     """Cleans the configuration for the run command."""
     settings = get_settings(playground_dir)
     try:
         return {
             "settings": {
                 "python": settings["python"],
-                "module": settings["module"],
-                "args": settings["args"],
+                "module": args.module if args.module else settings["module"],
+                "args": args.args if args.args else settings["args"],
             }
         }
     except KeyError as err:

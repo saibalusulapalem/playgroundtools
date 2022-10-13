@@ -17,7 +17,13 @@ class TestPlayground:
         ["args", "clean_config"],
         [
             (
-                Namespace(command="new", name="test", type="console", lib=[]),
+                Namespace(
+                    command="new",
+                    name="test",
+                    type="console",
+                    lib=[],
+                    verbose=1,
+                ),
                 {
                     "verbosity": 1,
                     "dir": Path("test").resolve(),
@@ -36,6 +42,7 @@ class TestPlayground:
                     name="test/subfolder",
                     type="jupyter",
                     lib=[],
+                    verbose=1,
                 ),
                 {
                     "verbosity": 1,

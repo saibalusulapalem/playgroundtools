@@ -11,6 +11,31 @@ An interface for managing playground projects.
 
 This package is intended to provide a quick and easy way to set up Python "projects," each containing their own files, folders, virtual environment, and installed packages. This also includes the ability to run these projects (called **playgrounds**) and delete them. This can be done either through the CLI or through the interactive GUI (with limited capabilities). The exact configuration for the creation and execution of these playgrounds are found [here](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json), in the package's configuration file.
 
+
+For example, creating an `api` playground results in the following file structure:
+```cmd
+playground
+│   .env
+│   main.py
+│   reset.py
+│   settings.json
+│
+├───.venv
+│       ...
+│
+├───api
+│       config.py
+│       crud.py
+│       database.py
+│       deps.py
+│       models.py
+│       schemas.py
+│       __init__.py
+│
+└───requirements
+        requirements.in
+```
+
 ## Commands
 
 `new`:
@@ -27,7 +52,7 @@ $ playground new api -n my_api -i requests -v  # verbosity can be set with the -
 `run`:
 Runs a playground.
 ```shell
-$ playground run [-h] name
+$ playground run [-h] [-m MODULE] [-a ARGS [ARGS ...]] name
 ```
 For example:
 ```shell
@@ -121,7 +146,7 @@ $ playground config edit "api.folders" "[\"api\", \"api/routers\", \"api/db\"]"
 The [config.json](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json) file simply contains configurations for different types of playgrounds. The settings for each type are specified by the available options aforementioned.
 
 For example, to create a `package` type, one could use:
-```json5
+```jsonc
 {
     // ...
     "package": {

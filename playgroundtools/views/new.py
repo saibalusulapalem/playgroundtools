@@ -23,7 +23,7 @@ class NewView:
 
         self.name = tk.StringVar()
         self.name_field = ttk.Entry(
-            self.input_frame, width=40, textvariable=self.name
+            self.input_frame, width=25, textvariable=self.name
         )
         self.name_field.grid(row=0, column=0, padx=5, sticky="NSEW")
 
@@ -33,6 +33,12 @@ class NewView:
             self.input_frame, width=10, textvariable=self.pg_type
         )
         self.pg_type_field.grid(row=0, column=1, padx=5, sticky="NSEW")
+
+        self.lib = tk.StringVar()
+        self.lib_field = ttk.Entry(
+            self.input_frame, width=40, textvariable=self.lib
+        )
+        self.lib_field.grid(row=0, column=2, padx=5, sticky="NSEW")
 
     def _make_preview_frame(self):
         self.preview_frame = ttk.LabelFrame(

@@ -90,8 +90,11 @@ class App:
         """Runs the new function from info given in the GUI."""
         name = self.new_view.name.get()
         type = self.new_view.pg_type.get()
+        lib = self.new_view.lib.get().split(",")
 
-        args = Namespace(command="new", func=new, name=name, type=type, lib=[])
+        args = Namespace(
+            command="new", func=new, name=name, type=type, lib=lib
+        )
         self.run_command(args)
 
     def delete_cmd(self):
@@ -103,7 +106,8 @@ class App:
 
     def run_command(self, args):
         """Dispatches a command based on args."""
-        with gui_manager(args, self.status):
+        args.verbose = 1
+        with gui_manager(self.status, args):
             args.func(args, self.status)
 
     def _check_requirements(self, args):

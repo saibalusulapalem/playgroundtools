@@ -63,7 +63,9 @@ class TestPGCommands:
         paths["settings"].write_text(json.dumps(settings, indent=4))
 
     def test_new(self, example_playground, tmp_path):
-        args = Namespace(command="new", name="test", type="console", lib=[])
+        args = Namespace(
+            command="new", name="test", type="console", lib=[], verbose=1
+        )
         args.name = tmp_path / args.name
 
         commands.new(args)
@@ -72,14 +74,16 @@ class TestPGCommands:
             assert path.exists()
 
     def test_new_invalid(self, tmp_path):
-        args = Namespace(command="new", name="test", type="test", lib=[])
+        args = Namespace(
+            command="new", name="test", type="test", lib=[], verbose=1
+        )
 
         with pytest.raises(PGInvalidConfError) as err:
             commands.new(args)
         assert err.value.args[0] == args.type
 
     def test_run(self, existing_playground, tmp_path, request):
-        args = Namespace(command="run", name="test")
+        args = Namespace(command="run", name="test", module=None, args=[])
         args.name = tmp_path / args.name
 
         try:
@@ -88,7 +92,7 @@ class TestPGCommands:
             os.chdir(request.config.invocation_dir)
 
     def test_run_invalid(self, tmp_path):
-        args = Namespace(command="run", name="test")
+        args = Namespace(command="run", name="test", module=None, args=[])
         args.name = tmp_path / args.name
 
         with pytest.raises(PGDoesNotExistError):
