@@ -1,5 +1,11 @@
 # Change Log
 
+## Version 1.7.0
+- Add ability to delete config keys
+- Reduce complexity of cleaning config
+- Simplify status management
+- Add additional config tests
+
 ## Version 1.6.0
 - Add `lib` field to GUI
 - Add ability to modify module and args at playground runtime

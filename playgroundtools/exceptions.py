@@ -1,4 +1,6 @@
+import os
 from contextlib import contextmanager
+from pathlib import Path
 from tkinter import messagebox
 
 from .util import get_full_path, remove_if_exists
@@ -41,32 +43,24 @@ class PGTypeNotEnteredError(PlaygroundException):
 
 
 @contextmanager
-def cli_manager(args):
-    """Cleans up the environment and prints errors in case of exceptions."""
-    try:
-        yield
-    except Exception as err:
-        print(get_result(err))
-        cleanup(args)
-    except KeyboardInterrupt:
-        cleanup(args)
-
-
-@contextmanager
-def gui_manager(args, status):
+def status_manager(args, status=None):
     """Shows errors and cleans up the environment in case of exceptions."""
+    current_dir = Path(".").resolve()
     try:
         yield
-    except Exception as err:
+    except (Exception, KeyboardInterrupt) as err:
         result = get_result(err)
-        messagebox.showerror("Error", result)
-        set_status(result, status)
+        set_status(result, status, error=True)
         cleanup(args)
+    finally:
+        os.chdir(current_dir)
 
 
-def set_status(text, status=None):
+def set_status(text, status=None, error=False):
     if status:
         status.set(text)
+        if error:
+            messagebox.showerror("Error", text)
     else:
         print(text)
 
@@ -74,7 +68,7 @@ def set_status(text, status=None):
 def get_result(err):
     """Returns a result based on an exception."""
     results = {
-        PGDoesNotExistError: "The playground {0} does not exist.",
+        PGDoesNotExistError: "The playground '{0}' does not exist.",
         PGConfigNotFoundError: "The configuration could not be found.",
         PGSettingsNotFoundError: "Settings for playground '{0}' was not found.",
         PGInvalidConfError: "'{0}' was not found in the configuration.",

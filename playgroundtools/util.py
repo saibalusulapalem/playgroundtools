@@ -23,11 +23,8 @@ def get_python_path(venv_path):
 
 def get_command(python, module, args):
     """Creates a command from a path, module, and arguments."""
-    args = " ".join(args)
-    cmd = f"{python} -m {module}"
-    if args:
-        cmd += f" {args}"
-    return cmd
+    cmd = [str(python), "-m", module, *args]
+    return " ".join(cmd)
 
 
 def remove_if_exists(folder):
@@ -48,3 +45,11 @@ def set_key(keys, value, config):
         return config
     key = config[keys[0]]
     return set_key(keys[1:], value, key)
+
+
+def delete_key(keys, config):
+    if len(keys) == 1:
+        del config[keys[0]]
+        return config
+    key = config[keys[0]]
+    return delete_key(keys[1:], key)

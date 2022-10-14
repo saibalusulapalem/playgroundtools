@@ -24,60 +24,62 @@ def print_version():
 # Functions for the 'new' command
 
 
-def new(args, status=None):
+def new(args, output=None):
     """Create a new playground."""
     raw_config = get_config()
     config = clean_config(args, raw_config)
-    vb = config["verbosity"]
 
-    new_playground(config["dir"], verbose=vb, status=status)
-    new_folders(config["dir"], config["folders"], verbose=vb, status=status)
-    new_files(config["dir"], config["files"], verbose=vb, status=status)
-    new_settings(config["dir"], config["settings"], verbose=vb, status=status)
-    new_venv(config["dir"], verbose=vb, status=status)
-    install_reqs(config["dir"], verbose=vb, status=status)
+    playground_dir = config["dir"]
+    verbose = config["verbosity"]
 
-    set_status("Playground creation successful.", status)
+    new_playground(playground_dir, verbose, output)
+    new_folders(playground_dir, config["folders"], verbose, output)
+    new_files(playground_dir, config["files"], verbose, output)
+    new_settings(playground_dir, config["settings"], verbose, output)
+    new_venv(playground_dir, verbose, output)
+    install_reqs(playground_dir, verbose, output)
+
+    set_status("Playground creation successful.", output)
 
 
-def new_playground(playground_dir, verbose=0, status=None):
+def new_playground(playground_dir, verbose=0, output=None):
     """Create the playground folder."""
     if verbose:
-        set_status("Creating the playground folder...", status)
+        set_status("Creating the playground folder...", output)
     remove_if_exists(playground_dir)
     playground_dir.mkdir()
 
 
-def new_folders(playground_dir, folders, verbose=0, status=None):
+def new_folders(playground_dir, folders, verbose=0, output=None):
     """Create all folders for a playground."""
     if verbose:
-        set_status("Creating necessary folders...", status)
+        set_status("Creating necessary folders...", output)
     for folder in folders:
         folder_path = playground_dir / folder
         if verbose > 1:
             print("\t", end="")
-            set_status(f"Creating {folder_path}", status)
+            set_status(f"Creating {folder_path}", output)
         folder_path.mkdir(exist_ok=True)
 
 
-def new_files(playground_dir, files, verbose=0, status=None):
+def new_files(playground_dir, files, verbose=0, output=None):
     """Create all files for a playground."""
     if verbose:
-        set_status("Creating necessary files...", status)
+        set_status("Creating necessary files...", output)
     for name, content in files.items():
         file_path = playground_dir / name
         if verbose > 1:
             print("\t", end="")
-            set_status(f"Creating {file_path}", status)
+            set_status(f"Creating {file_path}", output)
         with open(file_path, "w") as f:
             for line in content:
                 print(line, file=f)
 
 
-def new_settings(playground_dir, settings, verbose=0, status=None):
+def new_settings(playground_dir, settings, verbose=0, output=None):
     """Create the settings file for a playground."""
     if verbose:
-        set_status("Creating the settings file...", status)
+        set_status("Creating the settings file...", output)
     venv_path = get_venv_dir(playground_dir)
     python_path = get_python_path(venv_path)
     settings = {"python": str(python_path), **settings}
@@ -87,33 +89,39 @@ def new_settings(playground_dir, settings, verbose=0, status=None):
         json.dump(settings, f, indent=4)
 
 
-def new_venv(playground_dir, verbose=0, status=None):
+def new_venv(playground_dir, verbose=0, output=None):
     """Create a virtual environment for a playground."""
     if verbose:
-        set_status("Creating the virtual environment...", status)
+        set_status("Creating the virtual environment...", output)
     venv_path = get_venv_dir(playground_dir)
     venv.create(venv_path, with_pip=True)
 
 
-def install_reqs(playground_dir, verbose=0, status=None):
+def install_reqs(playground_dir, verbose=0, output=None):
     """Install the packages from a playground's requirements file."""
     if verbose:
-        set_status("Installing requirements...", status)
+        set_status("Installing requirements...", output)
     venv_path = get_venv_dir(playground_dir)
     python_path = get_python_path(venv_path)
+
     reqs_path = playground_dir / "requirements" / "requirements.in"
-    os.system(f"{python_path} -m pip install --no-cache-dir -r {reqs_path}")
+    args = ["install", "--no-cache-dir", "-r", str(reqs_path)]
+    if verbose:
+        args.append("-v")
+
+    cmd = get_command(python_path, "pip", args)
+    os.system(cmd)
 
 
 # Functions for the 'delete' command
 
 
-def delete(args, status=None):
+def delete(args, output=None):
     """Delete a playground."""
     config = clean_config(args)
     rmtree(config["dir"])
 
-    set_status("Playground deletion successful.", status)
+    set_status("Playground deletion successful.", output)
 
 
 # Functions for the 'run' command
@@ -123,6 +131,7 @@ def run(args):
     """Run a playground."""
     config = clean_config(args)
     cmd = get_command(**config["settings"])
+
     os.chdir(config["dir"])
     os.system(cmd)
 
@@ -130,14 +139,14 @@ def run(args):
 # Functions for the 'config' command
 
 
-def config(args, status=None):
+def config(args, output=None):
     """Read or modify the configuration."""
     raw_config = get_config()
 
     config = clean_config(args, raw_config)
     if args.subcommand:
         set_config(config)
-        set_status("Configuration modified successfully.", status)
+        set_status("Configuration modified successfully.", output)
     elif args.read:
         value = config["value"]
         print_json(value)

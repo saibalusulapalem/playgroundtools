@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 
 from . import APP_NAME, DESCRIPTION
 from .commands import config, delete, new, print_about, print_version, run
-from .exceptions import cli_manager
+from .exceptions import status_manager
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
     elif args.version:
         print_version()
     elif args.command:
-        with cli_manager(args):
+        with status_manager(args):
             args.func(args)
     else:
         parser.print_usage()
@@ -116,7 +116,11 @@ def get_parser():
     config_delete_cmd = config_subcommands.add_parser(
         "delete", help="Delete a playground type from the config file."
     )
-    config_delete_cmd.add_argument("-t", "--type", help="The type to delete.")
+    config_delete_cmd.add_argument(
+        "-k",
+        "--key",
+        help="The key to delete (can be a type or in the form {type}.{key}).",
+    )
     config_delete_cmd.add_argument(
         "-f",
         "--file",

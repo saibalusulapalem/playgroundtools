@@ -209,7 +209,7 @@ class TestConfCommands:
             with open(config_path, "w") as f:
                 json.dump(modified_config, f)
         args = Namespace(
-            command="config", subcommand="delete", type="test", file=None
+            command="config", subcommand="delete", key="test", file=None
         )
         assert commands.config(args) == raw_config
 
@@ -222,7 +222,7 @@ class TestConfCommands:
         with open(example_file, "w") as f:
             json.dump(example_type, f)
         args = Namespace(
-            command="config", subcommand="delete", type=None, file=example_file
+            command="config", subcommand="delete", key=None, file=example_file
         )
         assert commands.config(args) == raw_config
 
@@ -231,7 +231,7 @@ class TestConfCommands:
         args = Namespace(
             command="config",
             subcommand="delete",
-            type=None,
+            key=None,
             value=None,
             file=example_file,
         )

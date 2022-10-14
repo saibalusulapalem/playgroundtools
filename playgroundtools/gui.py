@@ -7,7 +7,7 @@ from .commands import delete, new
 from .exceptions import (
     PGNameNotEnteredError,
     PGTypeNotEnteredError,
-    gui_manager,
+    status_manager,
 )
 from .playground import get_config
 from .views.about import AboutDialog
@@ -107,7 +107,7 @@ class App:
     def run_command(self, args):
         """Dispatches a command based on args."""
         args.verbose = 1
-        with gui_manager(self.status, args):
+        with status_manager(args, self.status):
             args.func(args, self.status)
 
     def _check_requirements(self, args):
