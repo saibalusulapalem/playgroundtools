@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 1.7.1
+- Fix `config delete` command on README
+
 ## Version 1.7.0
 - Add ability to delete config keys
 - Reduce complexity of cleaning config

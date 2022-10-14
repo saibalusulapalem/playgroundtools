@@ -118,9 +118,9 @@ $ playground config add -f user_config.json
 ```
 
 `config delete`:
-Deletes a playground type from the configuration.
+Deletes a key from the configuration.
 ```shell
-$ playground config delete [-h] [-t TYPE] [-f FILE]
+$ playground config delete [-h] [-k KEY] [-f FILE]
 ```
 For example:
 ```shell
