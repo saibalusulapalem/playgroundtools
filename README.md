@@ -76,7 +76,7 @@ $ playground config [-h] [-k READ] {delete,set}
 ```
 For example:
 ```shell
-$ playground config set api.folders "[\"api\", \"api/routers\"]"
+$ playground config set -k api.folders -v "[\"api\", \"api/routers\"]"
 ```
 
 ## Graphical User Interface
@@ -124,7 +124,7 @@ $ playground config set [-h] [-k KEY] [-v VALUE] [-f FILE]
 ```
 For example:
 ```shell
-$ playground config set "api.folders" "[\"api\", \"api/routers\", \"api/db\"]"
+$ playground config set -k "api.folders" -v "[\"api\", \"api/routers\", \"api/db\"]"
 ```
 Configuration can also be added from a custom JSON file:
 ```shell

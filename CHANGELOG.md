@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 1.8.1
+- Fix `config set` command on README
+
 ## Version 1.8.0
 - Add a file dialog to select a playground to delete on the GUI
 - Make file preview more stable
