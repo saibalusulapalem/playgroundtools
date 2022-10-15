@@ -125,27 +125,11 @@ def clean_config_config(args, raw_config):
     """Cleans the configuration for the config command."""
     new_config = raw_config
     subcommands = {
-        "add": clean_config_conf_add,
         "delete": clean_config_conf_delete,
-        "edit": clean_config_conf_edit,
+        "set": clean_config_conf_set,
     }
     func = subcommands.get(args.subcommand, clean_config_conf_read)
     return func(args, new_config)
-
-
-def clean_config_conf_add(args, config):
-    """Cleans the configuration for the config add command."""
-    cleaned = config
-    if args.type:
-        cleaned[args.type] = {}
-        if args.value:
-            cleaned[args.type] = load_json("input", args.value)
-    elif args.file:
-        file_path = get_full_path(args.file)
-        with open(file_path) as f:
-            custom_config = load_json(file_path, f.read())
-        cleaned.update(custom_config)
-    return cleaned
 
 
 def clean_config_conf_delete(args, config):
@@ -166,12 +150,18 @@ def clean_config_conf_delete(args, config):
     return cleaned
 
 
-def clean_config_conf_edit(args, config):
-    """Cleans the configuration for the config edit command."""
+def clean_config_conf_set(args, config):
+    """Cleans the configuration for the config set command."""
     cleaned = config
-    keys = args.key.split(".")
-    value = load_json("input", args.value)
-    set_key(keys, value, cleaned)
+    if args.key:
+        keys = args.key.split(".")
+        value = load_json("input", args.value)
+        set_key(keys, value, cleaned)
+    elif args.file:
+        file_path = get_full_path(args.file)
+        with open(file_path) as f:
+            custom_config = load_json(file_path, f.read())
+        cleaned.update(custom_config)
     return cleaned
 
 

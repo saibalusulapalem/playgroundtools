@@ -100,19 +100,6 @@ def get_parser():
         help=f"Commands for working with the configuration of {APP_NAME}.",
     )
 
-    config_add_cmd = config_subcommands.add_parser(
-        "add", help="Add a playground type to the config file."
-    )
-    config_add_cmd.add_argument(
-        "-t", "--type", help="The name of the new type."
-    )
-    config_add_cmd.add_argument(
-        "-v", "--value", help="The value assigned to the new type (in JSON)"
-    )
-    config_add_cmd.add_argument(
-        "-f", "--file", help="Add options from a custom configuration file."
-    )
-
     config_delete_cmd = config_subcommands.add_parser(
         "delete", help="Delete a playground type from the config file."
     )
@@ -127,15 +114,19 @@ def get_parser():
         help="Delete options specified in a custom configuration file.",
     )
 
-    config_edit_cmd = config_subcommands.add_parser(
-        "edit", help="Edit an option for an existing playground type."
+    config_set_cmd = config_subcommands.add_parser(
+        "set", help="Set a key in the configuration."
     )
-    config_edit_cmd.add_argument(
-        "key",
-        help="The key in the configuration to modify (i.e. {type}.{key}).",
+    config_set_cmd.add_argument(
+        "-k",
+        "--key",
+        help="The key in the configuration to set (can be a type or {type}.{key}).",
     )
-    config_edit_cmd.add_argument(
-        "value", help="The value to change the key to (in JSON)"
+    config_set_cmd.add_argument(
+        "-v", "--value", help="The value to set the key to (in JSON)"
+    )
+    config_set_cmd.add_argument(
+        "-f", "--file", help="Add options from a custom configuration file."
     )
 
     config_cmd.add_argument(

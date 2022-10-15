@@ -72,11 +72,11 @@ $ playground delete jupyter_tests
 `config`:
 Reads or modifies the configuration.
 ```shell
-$ playground config [-h] [-k READ] {add,delete,edit}
+$ playground config [-h] [-k READ] {delete,set}
 ```
 For example:
 ```shell
-$ playground config edit api.folders "[\"api\", \"api/routers\"]"
+$ playground config set api.folders "[\"api\", \"api/routers\"]"
 ```
 
 ## Graphical User Interface
@@ -103,20 +103,6 @@ The available options are:
 
 ### Using the CLI
 
-`config add`:
-Adds a new playground type to the configuration.
-```shell
-$ playground config add [-h] [-t TYPE] [-v VALUE] [-f FILE]
-```
-For example:
-```shell
-$ playground config add "package" "{\"folders\": [\"src\"], \"files\": {\"setup.cfg\": []}...}"
-```
-Configuration can also be added from a custom JSON file:
-```shell
-$ playground config add -f user_config.json
-```
-
 `config delete`:
 Deletes a key from the configuration.
 ```shell
@@ -131,14 +117,18 @@ Keys from a custom config file can also be deleted:
 $ playground config delete -f user_config.json
 ```
 
-`config edit`:
-Modifies an existing key in the configuration.
+`config set`:
+Sets a key in the configuration.
 ```shell
-$ playground config edit [-h] key value
+$ playground config set [-h] [-k KEY] [-v VALUE] [-f FILE]
 ```
 For example:
 ```shell
-$ playground config edit "api.folders" "[\"api\", \"api/routers\", \"api/db\"]"
+$ playground config set "api.folders" "[\"api\", \"api/routers\", \"api/db\"]"
+```
+Configuration can also be added from a custom JSON file:
+```shell
+$ playground config set -f user_config.json
 ```
 
 ### Using JSON

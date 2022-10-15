@@ -1,4 +1,3 @@
-import tkinter as tk
 from argparse import Namespace
 from webbrowser import open as open_url
 
@@ -60,6 +59,8 @@ class App:
     def refresh_type(self, event=None):
         """Refreshes the directory preview upon a type change."""
         self.new_dir_preview.clear()
+        self.new_file_preview.clear_text()
+
         selected_type = self.new_type_chooser.get()
         type_config = self.config[selected_type]
 
@@ -76,10 +77,7 @@ class App:
         filename = item_values[0]
 
         content = self.files.get(filename, "")
-        content = "\n".join(content)
-
-        self.new_file_preview.delete(1.0, tk.END)
-        self.new_file_preview.insert(1.0, chars=content)
+        self.new_file_preview.set_text(content)
 
     def open_about(self, event=None):
         """Opens the about dialog."""

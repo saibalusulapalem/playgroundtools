@@ -1,5 +1,11 @@
 # Change Log
 
+## Version 1.8.0
+- Add a file dialog to select a playground to delete on the GUI
+- Make file preview more stable
+- Add labels to fields in the GUI
+- Unify `config add` and `config edit` commands: `config set`
+
 ## Version 1.7.1
 - Fix `config delete` command on README
 

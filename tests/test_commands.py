@@ -143,66 +143,6 @@ class TestConfCommands:
         with pytest.raises(PGInvalidConfError):
             commands.config(args)
 
-    def test_config_add(self, raw_config, example_type):
-        example_type_json = json.dumps(example_type["test"])
-        args = Namespace(
-            command="config",
-            subcommand="add",
-            type="test",
-            value=example_type_json,
-            file=None,
-        )
-        modified_config = {**raw_config, **example_type}
-        assert commands.config(args) == modified_config
-
-    def test_config_add_invalid_format(self, raw_config, example_type):
-        example_type_json = [
-            '"test": {' '    folders": [],',  # missing open quote
-            '    "files": {"main.py": ["print(\'test\')"]},',
-            '    "lib": [],',
-            '    "module": ["main"],',
-            '    "args": [],',
-            "}",
-        ]
-        example_type_json = "".join(example_type_json)
-        args = Namespace(
-            command="config",
-            subcommand="add",
-            type="test",
-            value=example_type_json,
-            file=None,
-        )
-        with pytest.raises(PGJSONFormatError):
-            commands.config(args)
-
-    def test_config_add_file(self, raw_config, example_type, tmp_path):
-        example_file = tmp_path / "test.json"
-        with open(example_file, "w") as f:
-            json.dump(example_type, f)
-        modified_config = {**raw_config, **example_type}
-        args = Namespace(
-            command="config",
-            subcommand="add",
-            type=None,
-            value=None,
-            file=example_file,
-        )
-        assert commands.config(args) == modified_config
-
-    def test_config_add_file_invalid_file(self, tmp_path):
-        example_file = tmp_path / "test.json"
-        args = Namespace(
-            command="config",
-            subcommand="add",
-            type=None,
-            value=None,
-            file=example_file,
-        )
-
-        with pytest.raises(FileNotFoundError) as err:
-            commands.config(args)
-        assert Path(err.value.filename) == example_file
-
     def test_config_delete(self, raw_config, example_type):
         modified_config = {**raw_config, **example_type}
         with load_file_resource("config.json") as config_path:
@@ -240,29 +180,59 @@ class TestConfCommands:
             commands.config(args)
         assert Path(err.value.filename) == example_file
 
-    def test_config_edit(self, raw_config):
+    def test_config_set(self, raw_config):
         modified_value = ["api", "api/routers", "api/db"]
         modified_value_json = '["api", "api/routers", "api/db"]'
         args = Namespace(
             command="config",
-            subcommand="edit",
+            subcommand="set",
             key="api.folders",
             value=modified_value_json,
+            file=None,
         )
         modified_config = raw_config
         modified_config["api"]["folders"] = modified_value
         assert commands.config(args) == modified_config
 
-    def test_config_edit_invalid_format(self, raw_config):
+    def test_config_set_invalid_format(self, raw_config):
         modified_value_json = (
             '["api", "api/routers", "api/db"'  # missing end bracket
         )
         args = Namespace(
             command="config",
-            subcommand="edit",
+            subcommand="set",
             key="api.folders",
             value=modified_value_json,
+            file=None,
         )
 
         with pytest.raises(PGJSONFormatError):
             commands.config(args)
+
+    def test_config_set_file(self, raw_config, example_type, tmp_path):
+        example_file = tmp_path / "test.json"
+        with open(example_file, "w") as f:
+            json.dump(example_type, f)
+        modified_config = {**raw_config, **example_type}
+        args = Namespace(
+            command="config",
+            subcommand="set",
+            key=None,
+            value=None,
+            file=example_file,
+        )
+        assert commands.config(args) == modified_config
+
+    def test_config_set_invalid_file(self, tmp_path):
+        example_file = tmp_path / "test.json"
+        args = Namespace(
+            command="config",
+            subcommand="set",
+            key=None,
+            value=None,
+            file=example_file,
+        )
+
+        with pytest.raises(FileNotFoundError) as err:
+            commands.config(args)
+        assert Path(err.value.filename) == example_file
