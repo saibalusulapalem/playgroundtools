@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 1.10.0
+- Add ability to customize format strings in `config.json`
+
 ## Version 1.9.0
 - Add ability to interpolate strings in `config.json`
 

@@ -70,7 +70,7 @@ $ playground delete jupyter_tests
 ```
 
 `config`:
-Reads or modifies the configuration.
+Reads or modifies the configuration. See the [Using the CLI](#using-the-cli) section for more detail.
 ```shell
 $ playground config [-h] [-k READ] {delete,set}
 ```
@@ -100,9 +100,12 @@ The available options are:
 - `lib`: the packages to be installed upon creation of the playground.
 - `module`: the module to run when the playground is executed via `-m {module}`.
 - `args`: the arguments to pass to the module upon execution (`-m {module} {args ...}`).
+- (OPTIONAL) `format`: specifies strings that are used for interpolation (see below)
 
-Keys and values can be interpolated using one of the strings below within curly brackets `{}` prepended by a `$` sign in the [config.json](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json) file.
+Keys and values can be interpolated using one of the strings below within curly brackets `{}` prepended by a `$` sign in the [config.json](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json) file. (as in `${string}`)
 - `name`: the playground name.
+
+Additional strings can be specified in the `format` key of a playground type. An example is shown in the [Using JSON](#using-json) section.
 
 ### Using the CLI
 
@@ -161,14 +164,20 @@ For example, to create a `package` type, one could use:
         },
         "lib": [
             "${name}",
-            "black",
-            "flake8",
-            "isort",
-            "build",
-            "twine"
+            "${formatter}",
+            "${linter}",
+            "${build}",
+            "${upload}",
+            "isort"
         ],
         "module": "${name}",
-        "args": []
+        "args": [],
+        "format": {
+            "formatter": "black",
+            "build": "build",
+            "upload": "twine",
+            "linter": "flake8"
+        }
     }
 }
 ```

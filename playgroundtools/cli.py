@@ -66,6 +66,11 @@ def get_parser():
         required=True,
         help="The name of the playground to create.",
     )
+    new_cmd.add_argument(
+        '-o',
+        '--options',
+        help='Optional arguments that override default interpolation (in JSON)'
+    )
     new_cmd.set_defaults(func=new)
 
     delete_cmd = subcommands.add_parser("delete", help="Delete a playground.")

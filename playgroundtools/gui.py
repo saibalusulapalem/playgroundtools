@@ -91,7 +91,12 @@ class App:
         lib = self.new_view.lib.get().split(",")
 
         args = Namespace(
-            command="new", func=new, name=name, type=type, lib=lib
+            command="new",
+            func=new,
+            name=name,
+            type=type,
+            lib=lib,
+            options=None
         )
         self.run_command(args)
 

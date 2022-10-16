@@ -64,7 +64,12 @@ class TestPGCommands:
 
     def test_new(self, example_playground, tmp_path):
         args = Namespace(
-            command="new", name="test", type="console", lib=[], verbose=1
+            command="new",
+            name="test",
+            type="console",
+            lib=[],
+            verbose=1,
+            options=None
         )
         path = tmp_path / args.name
         args.name = str(path)
@@ -76,7 +81,12 @@ class TestPGCommands:
 
     def test_new_invalid(self, tmp_path):
         args = Namespace(
-            command="new", name="test", type="test", lib=[], verbose=1
+            command="new",
+            name="test",
+            type="test",
+            lib=[],
+            verbose=1,
+            options=None
         )
 
         with pytest.raises(PGInvalidConfError) as err:

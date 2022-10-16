@@ -20,12 +20,21 @@ def load_json(name, input):
         raise PGJSONFormatError(name, str(err))
 
 
-def format_config(config, args):
+def format_config(config, custom, args):
     """Formats the keys and values of a configuration."""
     format_map = {
         "name": args.name,
+        **custom
     }
     return format_dict(config, format_map)
+
+
+def get_options(custom_format, args):
+    """Returns formatting options based on defaults and args."""
+    options = {}
+    if args.options:
+        options = load_json('options', args.options)
+    return {**custom_format, **options}
 
 
 def get_playground_dir(args):
@@ -105,7 +114,10 @@ def clean_config_new(args, raw_config):
         keys = (args.type, *err.args)
         key = ".".join(keys)
         raise PGInvalidConfError(key)
-    return format_config(cleaned, args)
+
+    custom_format = type_config.get("format", {})
+    options = get_options(custom_format, args)
+    return format_config(cleaned, options, args)
 
 
 def clean_config_run(args):

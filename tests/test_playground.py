@@ -46,14 +46,20 @@ class TestPlayground:
                 },
                 "lib": [
                     "${name}",
-                    "black",
-                    "flake8",
-                    "isort",
-                    "build",
-                    "twine",
+                    "${formatter}",
+                    "${linter}",
+                    "${build}",
+                    "${upload}",
+                    "isort"
                 ],
                 "module": "${name}",
                 "args": [],
+                "format": {
+                    "formatter": "black",
+                    "build": "build",
+                    "upload": "twine",
+                    "linter": "flake8"
+                }
             }
         }
 
@@ -66,7 +72,7 @@ class TestPlayground:
             "files": {
                 "setup.cfg": [
                     "[metadata]",
-                    "name = ${name}",
+                    "name = playground",
                     "version = 0.0.0",
                     "",
                     "[options]",
@@ -83,14 +89,14 @@ class TestPlayground:
                     "",
                     "setuptools.setup()",
                 ],
-                "${name}/__init__.py": [],
+                "playground/__init__.py": [],
                 "requirements/requirements.in": [
                     "playground",
                     "black",
                     "flake8",
-                    "isort",
                     "build",
                     "twine",
+                    "isort",
                 ],
             },
             "lib": [
@@ -124,6 +130,7 @@ class TestPlayground:
                     type="console",
                     lib=[],
                     verbose=1,
+                    options=None
                 ),
                 {
                     "verbosity": 1,
@@ -144,6 +151,7 @@ class TestPlayground:
                     type="jupyter",
                     lib=[],
                     verbose=1,
+                    options=None
                 ),
                 {
                     "verbosity": 1,
@@ -221,7 +229,12 @@ class TestPlayground:
                 json.dump(config, f)
 
         args = Namespace(
-            command="new", name="playground", type="package", lib=[], verbose=1
+            command="new",
+            name="playground",
+            type="package",
+            lib=[],
+            verbose=1,
+            options=None
         )
         cleaned = playground.clean_config(args, config)
         assert sorted(cleaned) == sorted(example_interpolated)
@@ -234,7 +247,12 @@ class TestPlayground:
                 json.dump(modified_config, f)
 
         args = Namespace(
-            command="new", name="test", type="http", lib=[], verbose=1
+            command="new",
+            name="test",
+            type="http",
+            lib=[],
+            verbose=1,
+            options=None
         )
 
         with pytest.raises(PGInvalidConfError) as err:
