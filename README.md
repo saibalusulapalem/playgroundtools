@@ -41,9 +41,9 @@ playground
 `new`:
 Creates a playground.
 ```shell
-$ playground new [-h] [-i LIB [LIB ...]] [-v] -n NAME type
+$ playground new [-h] [-i LIB [LIB ...]] [-v] -n NAME [-o OPTIONS] type
 ```
-For example, to create an api project:
+For example, to create an `api` project:
 ```shell
 # We can specify a list of optional packages to install via pip by using the `-i` option
 $ playground new api -n my_api -i requests -v  # verbosity can be set with the -v option
@@ -105,7 +105,7 @@ The available options are:
 Keys and values can be interpolated using one of the strings below within curly brackets `{}` prepended by a `$` sign in the [config.json](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json) file. (as in `${string}`)
 - `name`: the playground name.
 
-Additional strings can be specified in the `format` key of a playground type. An example is shown in the [Using JSON](#using-json) section.
+Additional strings can be specified in the `format` key of a playground type. An example is shown in the [Using JSON](#using-json) section. These default format strings can also be overriden through use of the `-o` option of the `new` command in the CLI.
 
 ### Using the CLI
 
