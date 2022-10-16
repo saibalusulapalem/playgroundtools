@@ -66,7 +66,8 @@ class TestPGCommands:
         args = Namespace(
             command="new", name="test", type="console", lib=[], verbose=1
         )
-        args.name = tmp_path / args.name
+        path = tmp_path / args.name
+        args.name = str(path)
 
         commands.new(args)
 
@@ -84,7 +85,8 @@ class TestPGCommands:
 
     def test_run(self, existing_playground, tmp_path, request):
         args = Namespace(command="run", name="test", module=None, args=[])
-        args.name = tmp_path / args.name
+        path = tmp_path / args.name
+        args.name = str(path)
 
         try:
             commands.run(args)
@@ -93,22 +95,25 @@ class TestPGCommands:
 
     def test_run_invalid(self, tmp_path):
         args = Namespace(command="run", name="test", module=None, args=[])
-        args.name = tmp_path / args.name
+        path = tmp_path / args.name
+        args.name = str(path)
 
         with pytest.raises(PGDoesNotExistError):
             commands.run(args)
 
     def test_delete(self, existing_playground, tmp_path):
         args = Namespace(command="delete", name="test")
-        args.name = tmp_path / args.name
+        path = tmp_path / args.name
+        args.name = str(path)
 
         commands.delete(args)
 
-        assert not args.name.exists()
+        assert not path.exists()
 
     def test_delete_invalid(self, tmp_path):
         args = Namespace(command="run", name="test")
-        args.name = tmp_path / args.name
+        path = tmp_path / args.name
+        args.name = str(path)
 
         with pytest.raises(PGDoesNotExistError):
             commands.run(args)

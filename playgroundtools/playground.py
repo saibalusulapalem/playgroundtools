@@ -9,7 +9,7 @@ from .exceptions import (
     PGSettingsNotFoundError,
 )
 from .resources import load_file_resource, load_text_resource
-from .util import delete_key, get_full_path, get_key, set_key
+from .util import delete_key, format_dict, get_full_path, get_key, set_key
 
 
 def load_json(name, input):
@@ -18,6 +18,14 @@ def load_json(name, input):
         return json.loads(input)
     except json.JSONDecodeError as err:
         raise PGJSONFormatError(name, str(err))
+
+
+def format_config(config, args):
+    """Formats the keys and values of a configuration."""
+    format_map = {
+        "name": args.name,
+    }
+    return format_dict(config, format_map)
 
 
 def get_playground_dir(args):
@@ -79,7 +87,7 @@ def clean_config_new(args, raw_config):
         raise PGInvalidConfError(args.type)
     try:
         lib = type_config["lib"] + args.lib
-        return {
+        cleaned = {
             "dir": get_full_path(args.name),
             "verbosity": args.verbose,
             "folders": type_config["folders"] + ["requirements"],
@@ -97,6 +105,7 @@ def clean_config_new(args, raw_config):
         keys = (args.type, *err.args)
         key = ".".join(keys)
         raise PGInvalidConfError(key)
+    return format_config(cleaned, args)
 
 
 def clean_config_run(args):

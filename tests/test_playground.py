@@ -17,6 +17,93 @@ from .fixtures import raw_config
 class TestPlayground:
     """Tests functions in the playground module."""
 
+    @pytest.fixture
+    def example_type(self):
+        return {
+            "package": {
+                "folders": ["${name}", "tests"],
+                "files": {
+                    "setup.cfg": [
+                        "[metadata]",
+                        "name = ${name}",
+                        "version = 0.0.0",
+                        "",
+                        "[options]",
+                        "packages = find:",
+                        "include_package_data = True",
+                    ],
+                    "pyproject.toml": [
+                        "[build-system]",
+                        'requires = ["setuptools>=61.0.0", "wheel"]',
+                        'build-backend = "setuptools.build_meta"',
+                    ],
+                    "setup.py": [
+                        "import setuptools",
+                        "",
+                        "setuptools.setup()",
+                    ],
+                    "${name}/__init__.py": [],
+                },
+                "lib": [
+                    "${name}",
+                    "black",
+                    "flake8",
+                    "isort",
+                    "build",
+                    "twine",
+                ],
+                "module": "${name}",
+                "args": [],
+            }
+        }
+
+    @pytest.fixture
+    def example_interpolated(self):
+        return {
+            "verbosity": 1,
+            "dir": Path("playground").resolve(),
+            "folders": ["playground", "tests", "requirements"],
+            "files": {
+                "setup.cfg": [
+                    "[metadata]",
+                    "name = ${name}",
+                    "version = 0.0.0",
+                    "",
+                    "[options]",
+                    "packages = find:",
+                    "include_package_data = True",
+                ],
+                "pyproject.toml": [
+                    "[build-system]",
+                    'requires = ["setuptools>=61.0.0", "wheel"]',
+                    'build-backend = "setuptools.build_meta"',
+                ],
+                "setup.py": [
+                    "import setuptools",
+                    "",
+                    "setuptools.setup()",
+                ],
+                "${name}/__init__.py": [],
+                "requirements/requirements.in": [
+                    "playground",
+                    "black",
+                    "flake8",
+                    "isort",
+                    "build",
+                    "twine",
+                ],
+            },
+            "lib": [
+                "playground",
+                "black",
+                "flake8",
+                "isort",
+                "build",
+                "twine",
+            ],
+            "settings": {"module": "playground", "args": []},
+        }
+
     def test_get_config(self, raw_config):
         assert playground.get_config() == raw_config
 
@@ -124,6 +211,20 @@ class TestPlayground:
     )
     def test_clean_config(self, args, clean_config, raw_config):
         assert playground.clean_config(args, raw_config) == clean_config
+
+    def test_format_config(
+        self, example_type, example_interpolated, raw_config
+    ):
+        config = {**raw_config, **example_type}
+        with load_file_resource("config.json") as config_path:
+            with open(config_path, "w") as f:
+                json.dump(config, f)
+
+        args = Namespace(
+            command="new", name="playground", type="package", lib=[], verbose=1
+        )
+        cleaned = playground.clean_config(args, config)
+        assert sorted(cleaned) == sorted(example_interpolated)
 
     def test_clean_config_invalid(self, raw_config):
         modified_config = raw_config

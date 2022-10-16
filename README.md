@@ -101,6 +101,9 @@ The available options are:
 - `module`: the module to run when the playground is executed via `-m {module}`.
 - `args`: the arguments to pass to the module upon execution (`-m {module} {args ...}`).
 
+Keys and values can be interpolated using one of the strings below within curly brackets `{}` prepended by a `$` sign in the [config.json](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json) file.
+- `name`: the playground name.
+
 ### Using the CLI
 
 `config delete`:
@@ -141,7 +144,7 @@ For example, to create a `package` type, one could use:
     // ...
     "package": {
         "folders": [
-            "src",
+            "${name}",
             "tests"
         ],
         "files": {
@@ -154,16 +157,17 @@ For example, to create a `package` type, one could use:
             "setup.py": [
                 // File contents go here...
             ]
+            // ...
         },
         "lib": [
-            "setuptools",
+            "${name}",
             "black",
             "flake8",
             "isort",
             "build",
             "twine"
         ],
-        "module": "",
+        "module": "${name}",
         "args": []
     }
 }

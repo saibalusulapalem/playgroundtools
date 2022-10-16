@@ -1,5 +1,8 @@
 # Change Log
 
+## Version 1.9.0
+- Add ability to interpolate strings in `config.json`
+
 ## Version 1.8.1
 - Fix `config set` command on README
 
