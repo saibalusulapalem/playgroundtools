@@ -48,6 +48,11 @@ For example, to create an `api` project:
 # We can specify a list of optional packages to install via pip by using the `-i` option
 $ playground new api -n my_api -i requests -v  # verbosity can be set with the -v option
 ```
+A customized creation can be accomplished through use of the `-o` option. See [Configuration Formatting](#formatting) for more detail.
+```shell
+# `package` is a custom playground type
+$ playground new package -n my_package -o "{\"author\": \"John Doe\"}"  # customization can be done via the `-o` option
+```
 
 `run`:
 Runs a playground.
@@ -102,10 +107,15 @@ The available options are:
 - `args`: the arguments to pass to the module upon execution (`-m {module} {args ...}`).
 - (OPTIONAL) `format`: specifies strings that are used for interpolation (see below)
 
-Keys and values can be interpolated using one of the strings below within curly brackets `{}` prepended by a `$` sign in the [config.json](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json) file. (as in `${string}`)
+### Formatting
+
+Keys and values can be interpolated using one of the strings below in the format `${string}` in the [config.json](https://github.com/saibalusulapalem/playgroundtools/blob/main/playgroundtools/config.json) file.
 - `name`: the playground name.
 
-Additional strings can be specified in the `format` key of a playground type. An example is shown in the [Using JSON](#using-json) section. These default format strings can also be overriden through use of the `-o` option of the `new` command in the CLI.
+Format strings can be customized to include common conventions. For instance, one can include an `author` key in the `format` section of their playground type to specify a default author when creating a package and reference it in the setup file of the playground by using `${author}`. An example of the usage of these format strings is shown below, in the [Using JSON](#using-json) section.
+
+
+Format strings also allow flexibility in the creation of playgrounds. You can override the default values for these strings when invoking the `new` command in the CLI by specifying the `-o` option, followed by JSON which determines the value for these fields upon creation.
 
 ### Using the CLI
 
