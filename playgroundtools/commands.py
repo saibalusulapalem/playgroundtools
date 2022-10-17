@@ -157,5 +157,6 @@ def config(args, output=None):
 
 
 def print_json(value):
+    """Print the JSON-encoded version of 'value'."""
     value_json = json.dumps(value, indent=4)
     print(value_json)

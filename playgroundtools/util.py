@@ -1,6 +1,6 @@
+import re
 from pathlib import Path
 from shutil import rmtree
-import re
 
 
 def get_full_path(name):
@@ -35,14 +35,20 @@ def remove_if_exists(folder):
 
 
 def get_key(keys, config):
-    """Return the corresponding value of a key recursively."""
+    """Return the corresponding value of a key recursively.
+
+    The 'keys' argument is a list of dictionary keys, from outermost to
+    innermost."""
     if not keys:
         return config
     return get_key(keys[1:], config[keys[0]])
 
 
 def set_key(keys, value, config):
-    """Set the value of a key recursively."""
+    """Set the value of a key recursively.
+
+    The 'keys' argument is a list of dictionary keys, from outermost to
+    innermost."""
     if len(keys) == 1:
         config.update({keys[0]: value})
         return config
@@ -51,7 +57,10 @@ def set_key(keys, value, config):
 
 
 def delete_key(keys, config):
-    """Delete the value of a key recursively."""
+    """Delete the value of a key recursively.
+
+    The 'keys' argument is a list of dictionary keys, from outermost to
+    innermost."""
     if len(keys) == 1:
         del config[keys[0]]
         return config
@@ -60,7 +69,11 @@ def delete_key(keys, config):
 
 
 def format_dict(unformatted, format_map):
-    """Format a dictionary based on a given map."""
+    """Format a dictionary based on a given map.
+
+    This function is responsible for the actual replacement of format strings
+    (${string}) with their appropriate counterparts, given in the 'format_map'
+    argument."""
     if type(unformatted) is dict:
         formatted = {}
         for key in unformatted:
@@ -81,7 +94,10 @@ def format_dict(unformatted, format_map):
 
 
 def format_str(unformatted, format_map):
-    """Format a string based on a given map."""
+    """Format a string based on a given map.
+
+    This function uses a regular expression to find format strings and replace
+    them with values specified in 'format_map'."""
     pattern = re.compile(r"^\$\{(?P<key>)\}$")
     return pattern.sub(
         lambda matchobj: format_map.get(matchobj.group("key")), unformatted

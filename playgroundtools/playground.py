@@ -13,7 +13,10 @@ from .util import delete_key, format_dict, get_full_path, get_key, set_key
 
 
 def load_json(name, input):
-    """Returns the JSON-decoded version of input."""
+    """Returns the JSON-decoded version of input.
+
+    This function is used to capture any JSON decode errors and accordingly
+    throw a PGJSONFormatError with a given name and the exception."""
     try:
         return json.loads(input)
     except json.JSONDecodeError as err:
@@ -21,7 +24,10 @@ def load_json(name, input):
 
 
 def format_config(config, custom, args):
-    """Formats the keys and values of a configuration."""
+    """Formats the keys and values of a configuration.
+
+    This function replaces format strings within the configuration with their
+    appropriate values so that playground creation can proceed."""
     format_map = {"name": args.name, **custom}
     return format_dict(config, format_map)
 
@@ -72,7 +78,10 @@ def get_settings(playground_dir):
 
 
 def clean_config(args, raw_config={}):
-    """Returns config options in a more usable format."""
+    """Returns config options in a more usable format.
+
+    A dictionary containing only the neccesary values is returned, making
+    arguments easier to work with."""
     config_map = {
         "new": clean_config_new,
         "delete": clean_config_delete,
