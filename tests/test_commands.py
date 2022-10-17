@@ -69,7 +69,7 @@ class TestPGCommands:
             type="console",
             lib=[],
             verbose=1,
-            options=None
+            options=None,
         )
         path = tmp_path / args.name
         args.name = str(path)
@@ -86,7 +86,7 @@ class TestPGCommands:
             type="test",
             lib=[],
             verbose=1,
-            options=None
+            options=None,
         )
 
         with pytest.raises(PGInvalidConfError) as err:

@@ -22,10 +22,7 @@ def load_json(name, input):
 
 def format_config(config, custom, args):
     """Formats the keys and values of a configuration."""
-    format_map = {
-        "name": args.name,
-        **custom
-    }
+    format_map = {"name": args.name, **custom}
     return format_dict(config, format_map)
 
 
@@ -33,7 +30,7 @@ def get_options(custom_format, args):
     """Returns formatting options based on defaults and args."""
     options = {}
     if args.options:
-        options = load_json('options', args.options)
+        options = load_json("options", args.options)
     return {**custom_format, **options}
 
 

@@ -82,7 +82,7 @@ def format_dict(unformatted, format_map):
 
 def format_str(unformatted, format_map):
     """Format a string based on a given map."""
-    pattern = re.compile(r'^\$\{(?P<key>)\}$')
+    pattern = re.compile(r"^\$\{(?P<key>)\}$")
     return pattern.sub(
-        lambda matchobj: format_map.get(matchobj.group('key')), unformatted
+        lambda matchobj: format_map.get(matchobj.group("key")), unformatted
     )

@@ -50,7 +50,7 @@ class TestPlayground:
                     "${linter}",
                     "${build}",
                     "${upload}",
-                    "isort"
+                    "isort",
                 ],
                 "module": "${name}",
                 "args": [],
@@ -58,8 +58,8 @@ class TestPlayground:
                     "formatter": "black",
                     "build": "build",
                     "upload": "twine",
-                    "linter": "flake8"
-                }
+                    "linter": "flake8",
+                },
             }
         }
 
@@ -130,7 +130,7 @@ class TestPlayground:
                     type="console",
                     lib=[],
                     verbose=1,
-                    options=None
+                    options=None,
                 ),
                 {
                     "verbosity": 1,
@@ -151,7 +151,7 @@ class TestPlayground:
                     type="jupyter",
                     lib=[],
                     verbose=1,
-                    options=None
+                    options=None,
                 ),
                 {
                     "verbosity": 1,
@@ -234,7 +234,7 @@ class TestPlayground:
             type="package",
             lib=[],
             verbose=1,
-            options=None
+            options=None,
         )
         cleaned = playground.clean_config(args, config)
         assert sorted(cleaned) == sorted(example_interpolated)
@@ -252,7 +252,7 @@ class TestPlayground:
             type="http",
             lib=[],
             verbose=1,
-            options=None
+            options=None,
         )
 
         with pytest.raises(PGInvalidConfError) as err:

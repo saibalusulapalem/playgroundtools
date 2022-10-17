@@ -96,7 +96,7 @@ class App:
             name=name,
             type=type,
             lib=lib,
-            options=None
+            options=None,
         )
         self.run_command(args)
 

@@ -67,9 +67,9 @@ def get_parser():
         help="The name of the playground to create.",
     )
     new_cmd.add_argument(
-        '-o',
-        '--options',
-        help='Optional arguments that override default interpolation (in JSON)'
+        "-o",
+        "--options",
+        help="Optional arguments that override default interpolation (in JSON)",
     )
     new_cmd.set_defaults(func=new)
 
