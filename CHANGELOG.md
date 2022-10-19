@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 1.10.1
+- Fix formatting across code
+- Add more documentation to functions
+- Add clarification over formatting in README 
+
 ## Version 1.10.0
 - Add ability to customize format strings in `config.json`
 
